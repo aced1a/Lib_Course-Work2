@@ -1,0 +1,125 @@
+﻿<Application x:Class="Library.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Library"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <Style x:Key="ASideButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#00000000"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{x:Static SystemColors.ControlLightBrush}"/>
+                    <Setter Property="Foreground" Value="{x:Static SystemColors.GrayTextBrush}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    
+
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Height" Value="22"/>
+        </Style>
+        
+        <ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
+            
+           <Border Background="{TemplateBinding Background}"
+          BorderBrush="{TemplateBinding BorderBrush}"
+          BorderThickness="{TemplateBinding BorderThickness}">
+                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{x:Static SystemColors.ControlLightBrush}"/>
+                    <Setter Property="Foreground" Value="{x:Static SystemColors.GrayTextBrush}" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+
+        <Style x:Key="PathStyle" TargetType="Path">
+            <Setter Property="Stretch" Value="Uniform"/>
+            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="StrokeThickness" Value="25"/>
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="0.1" ScaleY="0.1"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Fill" Value="Black"/>
+                    <Setter Property="Stroke" Value="#00000000"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Path x:Key="PublishersIcon"
+          Style="{StaticResource PathStyle}"
+          Data="F1 M 0,0 L -20,0 -20,-456 C -20,-469.28 -30.88,-480 -44,-480 L -380,-480
+		    C -393.28,-480 -404,-469.28 -404,-456 L -404,0 -424,0 C -430.72,0 -436,5.28 -436,12
+		    L -436,32 12,32 12,12 C 12,5.28 6.56,0 0,0 z
+		    M -308,-404 C -308,-410.72 -302.72,-416 -296,-416 L -256,-416 C -249.44,-416 -244,-410.72 -244,-404
+		    L -244,-364 C -244,-357.44 -249.44,-352 -256,-352 L -296,-352 C -302.72,-352 -308,-357.44 -308,-364 z
+		    M -308,-308 C -308,-314.72 -302.72,-320 -296,-320 L -256,-320 C -249.44,-320 -244,-314.72 -244,-308
+		    L -244,-268 C -244,-261.44 -249.44,-256 -256,-256 L -296,-256 C -302.72,-256 -308,-261.44 -308,-268 z
+		    M -256,-160 L -296,-160 C -302.72,-160 -308,-165.44 -308,-172 L -308,-212 C -308,-218.72 -302.72,-224 -296,-224
+		    L -256,-224 C -249.44,-224 -244,-218.72 -244,-212 L -244,-172 C -244,-165.44 -249.44,-160 -256,-160 z
+		    M -180,0 L -244,0 -244,-84 C -244,-90.72 -238.72,-96 -232,-96 L -192,-96
+		    C -185.44,-96 -180,-90.72 -180,-84 z
+		    M -116,-172 C -116,-165.44 -121.44,-160 -128,-160 L -168,-160 C -174.72,-160 -180,-165.44 -180,-172
+		    L -180,-212 C -180,-218.72 -174.72,-224 -168,-224 L -128,-224 C -121.44,-224 -116,-218.72 -116,-212 z
+		    M -116,-268 C -116,-261.44 -121.44,-256 -128,-256 L -168,-256 C -174.72,-256 -180,-261.44 -180,-268
+		    L -180,-308 C -180,-314.72 -174.72,-320 -168,-320 L -128,-320 C -121.44,-320 -116,-314.72 -116,-308 z
+		    M -116,-364 C -116,-357.44 -121.44,-352 -128,-352 L -168,-352 C -174.72,-352 -180,-357.44 -180,-364
+		    L -180,-404 C -180,-410.72 -174.72,-416 -168,-416 L -128,-416 C -121.44,-416 -116,-410.72 -116,-404 z"/>
+        <Path x:Key="AuthorsIcon"
+          Style="{StaticResource PathStyle}"
+          Data="F1 M 0,0 C 35.2,0 64,28.64 64,64 64,99.2 35.2,128 0,128
+		     -35.36,128 -64,99.2 -64,64 -64,28.64 -35.36,0 0,0 z
+		    M 48,144 L 36.64,144 C 13.92,154.4 -12.96,154.88 -36.64,144 L -48,144 C -74.56,144 -96,165.44 -96,192
+		    L -96,328 C -96,341.12 -85.28,352 -72,352 L -56,352 -56,488 C -56,501.12 -45.28,512 -32,512
+		    L 32,512 C 45.12,512 56,501.12 56,488 L 56,352 72,352 C 85.12,352 96,341.12 96,328
+		    L 96,192 C 96,165.44 74.4,144 48,144 z"/>
+        <Path x:Key="GenresIcon"
+              Style="{StaticResource PathStyle}"
+              Data="F1 M 0,0 C 0,-53.12 -43.04,-96 -96,-96 -149.12,-96 -192,-53.12 -192,0
+		     -192,52.96 -149.12,96 -96,96 -43.04,96 0,52.96 0,0 z
+		    M -118.56,144.96 C -177.76,108.64 -273.92,98.72 -322.24,96 -338.56,95.04 -352,107.36 -352,123.04
+		    L -352,345.92 C -352,360.16 -340.48,372.16 -325.6,372.96 -281.92,375.2 -193.6,383.52 -132.48,414.4
+		     -123.2,419.04 -112,412.64 -112,402.4 L -112,156.48 C -112,151.84 -114.4,147.52 -118.56,144.96 z
+		    M 130.08,96 C 81.76,98.72 -14.4,108.64 -73.6,144.96 -77.76,147.52 -80,152 -80,156.64
+		    L -80,402.4 C -80,412.64 -68.96,419.04 -59.52,414.4 1.44,383.68 89.76,375.2 133.44,372.96
+		     148.32,372.16 160,360.16 160,345.92 L 160,123.04 C 160,107.36 146.4,95.04 130.08,96 z"/>
+        <Path x:Key="BooksIcon"
+            Style="{StaticResource PathStyle}"
+            Data="F1 M 0,0 L 0,-336 C 0,-349.44 -10.72,-360 -24,-360 L -352,-360 C -405.12,-360 -448,-317.12 -448,-264
+		    L -448,56 C -448,108.96 -405.12,152 -352,152 L -24,152 C -10.72,152 0,141.28 0,128
+		    L 0,112 C 0,104.48 -3.52,97.6 -8.96,93.28 -13.12,77.76 -13.12,33.92 -8.96,18.56
+		     -3.52,14.24 0,7.36 0,0 z
+		    M -320,-226.08 C -320,-229.44 -317.44,-232 -314.08,-232 L -102.08,-232 C -98.72,-232 -96,-229.44 -96,-226.08
+		    L -96,-206.08 C -96,-202.72 -98.72,-200 -102.08,-200 L -314.08,-200 C -317.44,-200 -320,-202.72 -320,-206.08 z
+		    M -320,-162.08 C -320,-165.44 -317.44,-168 -314.08,-168 L -102.08,-168 C -98.72,-168 -96,-165.44 -96,-162.08
+		    L -96,-142.08 C -96,-138.72 -98.72,-136 -102.08,-136 L -314.08,-136 C -317.44,-136 -320,-138.72 -320,-142.08 z
+		    M -66.72,88 L -352,88 C -369.76,88 -384,73.6 -384,56 -384,38.4 -369.6,24 -352,24
+		    L -66.72,24 C -68.64,40.96 -68.64,70.88 -66.72,88 z"/>
+        <Path x:Key="SearchIcon"
+            Style="{StaticResource PathStyle}"
+            Data="F1 M 0,0 L -99.68,-99.68 C -104.16,-104.16 -110.4,-106.56 -116.8,-106.56 L -132.96,-106.56 C -105.44,-141.92 -88.96,-186.4 -88.96,-234.56        -88.96,-349.6 -182.08,-442.56 -296.96,-442.56 -412,-442.56 -504.96,-349.6 -504.96,-234.56 -504.96,-119.68 -412,-26.56 -296.96,-26.56        -248.8,-26.56 -204.32,-43.04 -168.96,-70.56 L -168.96,-54.4 C -168.96,-48 -166.56,-41.76 -162.08,-37.28       L -62.4,62.4 C -52.96,71.84 -37.76,71.84 -28.48,62.4 L -0.16,34.08 C 9.28,24.64 9.28,9.44 0,0 z       M -296.96,-106.56 C -367.68,-106.56 -424.96,-163.84 -424.96,-234.56 -424.96,-305.28 -367.84,-362.56 -296.96,-362.56        -226.4,-362.56 -168.96,-305.44 -168.96,-234.56 -168.96,-164 -226.24,-106.56 -296.96,-106.56 z">
+            <Path.LayoutTransform>
+                <ScaleTransform ScaleX="0.05" ScaleY="0.05"/>
+            </Path.LayoutTransform>
+        </Path>
+    </Application.Resources>
+</Application>

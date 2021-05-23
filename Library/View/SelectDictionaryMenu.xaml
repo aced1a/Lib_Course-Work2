@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="Library.View.SelectDictionaryMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Library.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="110">
+    <Grid>
+        <local:PathButton Margin="25,40,0,0"
+                Caption="Книги"
+                Icon="{StaticResource BooksIcon}" HorizontalAlignment="Left"/>
+        <local:PathButton Margin="22,139,0,0"
+                Caption="Жанры"
+                Icon="{StaticResource GenresIcon}" HorizontalAlignment="Left"/>
+        <local:PathButton Margin="20,240,0,0"
+                Caption="Авторы"
+                Icon="{StaticResource AuthorsIcon}" HorizontalAlignment="Left"/>
+        <local:PathButton Margin="15,340,0,0"
+                Caption="Издатели"
+                Icon="{StaticResource PublishersIcon}" HorizontalAlignment="Left"/>
+    </Grid>
+</UserControl>
