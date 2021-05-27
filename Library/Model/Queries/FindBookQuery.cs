@@ -7,7 +7,7 @@ using Library.Models;
 
 namespace Library.Query
 {
-    class FindBookQuery : IExecutableQuery
+    public class FindBookQuery : IExecutableQuery
     {
         public Book Book { get; set; }
 
@@ -21,6 +21,8 @@ namespace Library.Query
 
         public IQueryable<Book> Results { get; private set; }
 
+        public int? BeginYear { get; set; }
+        public int? EndYear { get; set; }
 
         public event QueryExecuted ExecuteQuery;
         

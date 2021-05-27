@@ -68,21 +68,68 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="MainWindow.xaml.cs" />
+    <Compile Include="Model\BookInfo.cs" />
     <Compile Include="Model\LibraryEntities\BaseEntity.cs" />
+    <Compile Include="SubsidiarySearchWindow.xaml.cs">
+      <DependentUpon>SubsidiarySearchWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\EditAuthorViewModel.cs" />
     <Compile Include="ViewModel\AuthorSearchViewModel.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\BindingTypeSearchViewModel.cs" />
+    <Compile Include="ViewModel\BookSearchViewModel.cs" />
+    <Compile Include="ViewModel\CoverTypeSearchViewModel.cs" />
+    <Compile Include="ViewModel\EditBindingTypeViewModel.cs" />
+    <Compile Include="ViewModel\EditCoverTypeViewModel.cs" />
+    <Compile Include="ViewModel\EditGenreViewModel.cs" />
+    <Compile Include="ViewModel\EditPublisherViewModel.cs" />
+    <Compile Include="ViewModel\GenreSearchViewModel.cs" />
+    <Compile Include="ViewModel\LocationSearchViewModel.cs" />
+    <Compile Include="ViewModel\PublisherSearchViewModel.cs" />
+    <Compile Include="ViewModel\SelectDictionaryMenuViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\SearchModeViewModel.cs" />
-    <Compile Include="View\ASideButtonMenu.xaml.cs">
-      <DependentUpon>ASideButtonMenu.xaml</DependentUpon>
+    <Compile Include="ViewModel\StorySearchViewModel.cs" />
+    <Compile Include="View\EditAuthor.xaml.cs">
+      <DependentUpon>EditAuthor.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\AuthorSearch.xaml.cs" />
+    <Compile Include="View\BindingTypeSearch.xaml.cs">
+      <DependentUpon>BindingTypeSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\BookSearch.xaml.cs">
+      <DependentUpon>BookSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CoverTypeSearch.xaml.cs">
+      <DependentUpon>CoverTypeSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\EditBook.xaml.cs">
+      <DependentUpon>EditBook.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\EditElement.xaml.cs">
+      <DependentUpon>EditElement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GenreSearch.xaml.cs">
+      <DependentUpon>GenreSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\HorizontalListBox.xaml.cs">
+      <DependentUpon>HorizontalListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LocationSearch.xaml.cs">
+      <DependentUpon>LocationSearch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\PathButton.xaml.cs" />
-    <Compile Include="View\SearchMode.xaml.cs" />
+    <Compile Include="View\PublisherSearch.xaml.cs">
+      <DependentUpon>PublisherSearch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SelectDictionaryMenu.xaml.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="View\SelectedDictionaryMenuSecondPage.xaml.cs">
+      <DependentUpon>SelectedDictionaryMenuSecondPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\StorySearch.xaml.cs">
+      <DependentUpon>StorySearch.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -143,7 +190,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\ASideButtonMenu.xaml">
+    <Page Include="SubsidiarySearchWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\EditAuthor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -151,17 +202,57 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\BindingTypeSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\BookSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CoverTypeSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\EditBook.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\EditElement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GenreSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\HorizontalListBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\LocationSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\PathButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\SearchMode.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="View\PublisherSearch.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SelectDictionaryMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\SelectedDictionaryMenuSecondPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\StorySearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

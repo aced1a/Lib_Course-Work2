@@ -4,6 +4,7 @@ namespace Library.Models
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.Text;
     using System.Data.Entity.Spatial;
 
     [Table("book")]
@@ -59,5 +60,42 @@ namespace Library.Models
         public virtual Cover Cover { get; set; }
 
         public virtual Location Location { get; set; }
+
+        [NotMapped]
+        public string Authors
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Авторы: ");
+                int i = 0, min = Math.Min(3, BookAuthor.Count);
+                foreach(var author in BookAuthor)
+                {
+                    sb.Append(author.Author.FullName); i++;
+                    if (i >= min) break;
+                    sb.Append(", ");
+                }
+                if (min > 3) sb.Append(" ...");
+                return sb.ToString();
+            }
+        }
+
+        public string Genres
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Жанры: ");
+                int i = 0, min = Math.Min(3, BookGenre.Count);
+                foreach (var genre in BookGenre)
+                {
+                    sb.Append(genre.Genre.Name); i++;
+                    if (i >= min) break;
+                    sb.Append(", ");
+                }
+                if (min > 3) sb.Append(" ...");
+                return sb.ToString();
+            }
+        }
     }
 }

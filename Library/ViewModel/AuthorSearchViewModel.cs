@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using Library.Models;
-
-using Library.Query;
+using Library.View;
 
 namespace Library.ViewModel
 {
     class AuthorSearchViewModel : INotifyPropertyChanged
     {
-        Func<Author, ObservableCollection<Author>> search;
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        IMainWindowCodeBehind _mainCodeBehind;
+
         string _firstName, _lastName, _middleName;
 
         private ObservableCollection<Author> _authors;
@@ -29,8 +31,18 @@ namespace Library.ViewModel
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
+        private Author _selectedAuthor;
+        public Author SelectedAuthor
+        {
+            get => _selectedAuthor;
+            set
+            {
+                _selectedAuthor = value;
+                updateSelectedAuthors?.Invoke(_selectedAuthor);
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedAuthor)));
+            }
+        }
+        Action<Author> updateSelectedAuthors;
 
         public string FirstName
         {
@@ -61,48 +73,102 @@ namespace Library.ViewModel
         }
 
 
-        public AuthorSearchViewModel(Func<Author, ObservableCollection<Author>> func)
+        public AuthorSearchViewModel(IMainWindowCodeBehind codeBehind, Action<Author> action=null)
         {
-            search += func;
+            _mainCodeBehind = codeBehind;
+            updateSelectedAuthors += action;
         }
 
 
-        RelayCommand _sendQueryCommand;
-        public RelayCommand SendQueryCommand
+        RelayCommand _findAuthorsCommand;
+        public RelayCommand FindAuthorsCommand
         {
             get
             {
-                return _sendQueryCommand = _sendQueryCommand ?? new RelayCommand(SendFindQuery);
+                return _findAuthorsCommand = _findAuthorsCommand ?? new RelayCommand(FindAuthors);
             }
         }
 
-        private void SendFindQuery()
+        private void FindAuthors()
         {
-            if (FirstName == "KEKW")
+            Authors = _mainCodeBehind.FindAuthors(
+                new Author
+                {
+                    ID = -1,
+                    LastName = this.LastName,
+                    FirstName = this.FirstName,
+                    MiddleName = this.MiddleName
+                }
+            );
+        }
+
+
+        RelayCommand _addAuthorCommand;
+        public RelayCommand AddAuthorCommand
+        {
+            get => _addAuthorCommand = _addAuthorCommand ?? new RelayCommand(AddAuthor);
+        }
+
+        RelayCommand _chgAuthorCommand;
+        public RelayCommand ChangeAuthorCommand
+        {
+            get => _chgAuthorCommand = _chgAuthorCommand ?? new RelayCommand(ChgAuthor);
+        }
+
+        RelayCommand _deleteAuthorCommand;
+        public RelayCommand DeleteAuthorCommand
+        {
+            get => _deleteAuthorCommand = _deleteAuthorCommand ?? new RelayCommand(DeleteAuthor);
+        }
+
+        private void AddAuthor() 
+        {
+            OpenEditWindow(
+                new Author()
+                {
+                    ID = -1
+                }    
+            );   
+        }
+
+        private void ChgAuthor()
+        {
+            if(SelectedAuthor != null)
+                OpenEditWindow(SelectedAuthor);
+        }
+
+        private void DeleteAuthor()
+        {
+            if(SelectedAuthor != null)
             {
-                Authors[0].MiddleName = "KEKW";
+                _mainCodeBehind?.Delete(SelectedAuthor);
+                Authors.Remove(SelectedAuthor);
+            }
+        }
+
+        private void OpenEditWindow(Author author)
+        {
+            SubsidiarySearchWindow window = new SubsidiarySearchWindow();
+            EditAuthor view = new EditAuthor();
+            EditAuthorViewModel vm = new EditAuthorViewModel(author, _mainCodeBehind, UpdateItems);
+            view.DataContext = vm;
+            window.OutputView.Content = view;
+
+            window.ShowDialog();
+        }
+
+        private void UpdateItems(Author item)
+        {
+            if (item != null && Authors.Contains(item) == false)
+            {
+                Authors.Add(item);
             }
             else
             {
-                Authors = search?.Invoke(GetFindQuery());
-                if (Authors == null)
-                    System.Windows.MessageBox.Show("It's null");
-                else
-                    System.Windows.MessageBox.Show(Authors.Count.ToString());
+                Authors.Remove(item);
+                Authors.Add(item);
             }
-        }
-
-        private Author GetFindQuery()
-        {
-            Author author = new Author
-            {
-                ID = -1,
-                LastName = this.LastName,
-                FirstName = this.FirstName,
-                MiddleName = this.MiddleName
-            };
-
-            return author;
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Authors)));
         }
     }
 }

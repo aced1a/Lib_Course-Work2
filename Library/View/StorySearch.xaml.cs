@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Library.View
 {
     /// <summary>
-    /// Логика взаимодействия для AuthorSearch.xaml
+    /// Логика взаимодействия для StorySearch.xaml
     /// </summary>
-    public partial class AuthorSearch : UserControl
+    public partial class StorySearch : UserControl
     {
-        public AuthorSearch()
+        public StorySearch()
         {
             InitializeComponent();
         }

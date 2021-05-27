@@ -10,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Library.View
+namespace Library
 {
     /// <summary>
-    /// Логика взаимодействия для AuthorSearch.xaml
+    /// Логика взаимодействия для SubsidiarySearchWindow.xaml
     /// </summary>
-    public partial class AuthorSearch : UserControl
+    public partial class SubsidiarySearchWindow : Window
     {
-        public AuthorSearch()
+        public SubsidiarySearchWindow()
         {
             InitializeComponent();
         }

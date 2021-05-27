@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Library.View
 {
     /// <summary>
-    /// Логика взаимодействия для ASideButtonMenu.xaml
+    /// Логика взаимодействия для SelectedDictionaryMenuSecondPage.xaml
     /// </summary>
-    public partial class ASideButtonMenu : UserControl
+    public partial class SelectedDictionaryMenuSecondPage : UserControl
     {
-        public ASideButtonMenu()
+        public SelectedDictionaryMenuSecondPage()
         {
             InitializeComponent();
         }

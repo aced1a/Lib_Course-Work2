@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Library.Query
 {
-    interface IExecutableQuery
+    public interface IExecutableQuery
     {
         event QueryExecuted ExecuteQuery;
         bool Execute();
     }
 
 
-    delegate object QueryExecuted(IExecutableQuery query);
+    public delegate object QueryExecuted(IExecutableQuery query);
 }

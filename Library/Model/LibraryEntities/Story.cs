@@ -23,6 +23,9 @@ namespace Library.Models
         [StringLength(50), Column("title")]
         public string Title { get; set; }
 
+        [NotMapped]
+        public string Name { get => Title; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BookStory> BookStory { get; set; }
 

@@ -14,6 +14,12 @@ namespace Library
 
         public LibraryEntities Context { get => context; }
 
+        public IEnumerable<Author> Authors { get => context.Authors; }
+        public IEnumerable<Genre> Genres { get => context.Genres; }
+        public IEnumerable<Publisher> Publishers { get => context.Publishers; }
+        public IEnumerable<Book> Books { get => context.Books; }
+
+
         public LibraryDAL()
         {
             context = new LibraryEntities();
@@ -72,13 +78,13 @@ namespace Library
             if (query.Authors != null) FindBookByAuthor(query.Authors, results);
             if (query.Publishers != null) FindBookByPublisher(query.Publishers, results);
 
-            return results;
+            return results ?? context.Books;
         }
 
         public void FindBookByInfo(Book book, IQueryable<Book> books=null)
         {
             if (book.Title != null)
-                books = from item in (books != null ? books : context.Books) where item.Title.ToLower().Contains(book.Title) select item;
+                books = from item in (books != null ? books : context.Books) where item.Title.ToLower().Contains(book.Title.ToLower()) select item;
             if (book.Year != null)
                 books = from item in (books != null ? books : context.Books) where item.Year == book.Year select item;
             if (book.CoverID != null)
@@ -89,9 +95,10 @@ namespace Library
 
         public void FindBookByGenres(IEnumerable<Genre> genres, IQueryable<Book> books = null)
         {
-            //foreach (var genre in genres)
-            //    result = from item in context.BooksGenres where item.GenreID == genre select item.BookID;
-            books = context.BooksGenres.Join(genres, bg => bg.GenreID, g => g.ID, (bg, g) => bg.Book).Distinct();
+            books = (books ?? context.Books).Join(
+                context.BooksGenres.Join(genres, bg => bg.GenreID, g => g.ID, (bg, g) => bg.Book).Distinct(),
+                b => b.ID, i => i.ID, (b,i) => b
+            );
         }
 
         public void FindBookByAuthor(IEnumerable<Author> authors, IQueryable<Book> books = null)
@@ -102,11 +109,7 @@ namespace Library
 
         public void FindBookByStory(IEnumerable<Story> stories, IQueryable<Book> books = null)
         {
-            //IQueryable<int> result = null;
-
             books = context.BooksStories.Join(stories, ab => ab.StoryID, s => s.ID, (ab, s) => ab.Book).Distinct();
-
-            //books = result.Join((books != null ? books : context.Books), r => r, b => b.ID, (r, b) => b);
         }
 
         public void FindBookByPublisher(IEnumerable<Publisher> publishers, IQueryable<Book> books = null) 
@@ -116,7 +119,10 @@ namespace Library
 
         public void FindBookByISBN(ISBN isbn, IQueryable<Book> books=null)
         { 
-            books = from item in context.ISBNs where item.isbn == isbn.isbn select item.Book;  
+            books = (books ?? context.Books).Join( 
+                from item in context.ISBNs where item.isbn == isbn.isbn select item.Book,
+                b => b.ID, i => i.ID, (b,i) => b
+                );  
         }
 
         
@@ -131,9 +137,9 @@ namespace Library
             IQueryable<Location> results = null;
 
             if (location.Rack != null)
-                results = from item in (results != null ? results : context.Locations) where item.Rack.Contains(location.Rack) select item;
+                results = from item in (results ?? context.Locations) where item.Rack.Contains(location.Rack) select item;
             if (location.Shelf != null)
-                results = from item in (results != null ? results : context.Locations) where item.Shelf == location.Shelf select item;
+                results = from item in (results ?? context.Locations) where item.Shelf == location.Shelf select item;
 
             return results;
         }
@@ -156,9 +162,24 @@ namespace Library
             if (cover.ImageID != null)
                 results = from item in (results != null ? results : context.Covers) where item.ImageID == cover.ImageID select item;
 
-            return results;
+            return results ?? context.Covers;
         }
 
+        public IQueryable<CoverType> FindCoverType(CoverType cover)
+        {
+            IQueryable<CoverType> results = null;
+            if (cover.Name != null)
+                results = from item in context.CoverTypes where item.Name.ToLower().Contains(cover.Name.ToLower()) select item;
+            return results ?? context.CoverTypes;
+        }
+
+        public IQueryable<BindingType> FindBindingType(BindingType cover)
+        {
+            IQueryable<BindingType> results = null;
+            if (cover.Name != null)
+                results = from item in context.BindingTypes where item.Name.ToLower().Contains(cover.Name.ToLower()) select item;
+            return results ?? context.BindingTypes;
+        }
 
         public IQueryable<Story> FindStory(FindStoryQuery query)
         {
@@ -167,47 +188,50 @@ namespace Library
             if (query.Story != null) FindStoryByInfo(query.Story, results);
             if (query.Authors != null) FindStoryByAuthor(query.Authors, results);
 
-            return results;
+            return results ?? context.Stories;
         }
 
         public void FindStoryByInfo(Story story, IQueryable<Story> stories) 
         {
-            stories = from item in (stories != null ? stories : context.Stories) where item.Title.ToLower().Contains(story.Title) select item;
+            stories = from item in (stories ?? context.Stories) where item.Title.ToLower().Contains(story.Title.ToLower()) select item;
         }
-
 
         public void FindStoryByAuthor(IEnumerable<Author> authors, IQueryable<Story> stories = null)
         {
             stories = context.StoriesAuthors.Join(authors, s => s.AuthorID, a => a.ID, (s, a) => s.Story);
         }
 
-
         public IQueryable<Genre> FindGenre(Genre genre)
         {
-            var results = from item in context.Genres where item.Name == genre.Name select item;
-            return results;
-        }
+            IQueryable<Genre> results = null;
+            if(genre.Name != null)
+                results = from item in context.Genres where item.Name == genre.Name select item;
 
+            return results ?? context.Genres;
+        }
         public IQueryable<Author> FindAuthor(Author author)
         {
             IQueryable<Author> results = null;
 
             if (author.FirstName != null)
-                results = from item in (results != null ? results : context.Authors) where item.FirstName.ToLower().Contains(author.FirstName) select item;
+                results = from item in (results ?? context.Authors) where item.FirstName.ToLower().Contains(author.FirstName) select item;
+           
             if (author.MiddleName != null)
-                results = from item in (results != null ? results : context.Authors) where item.MiddleName.ToLower().Contains(author.MiddleName) select item;
+                results = from item in (results ?? context.Authors) where item.MiddleName.ToLower().Contains(author.MiddleName) select item;
+            
             if (author.LastName != null)
-                results = from item in (results != null ? results : context.Authors) where item.LastName.ToLower().Contains(author.LastName) select item;
+                results = from item in (results ?? context.Authors) where item.LastName.ToLower().Contains(author.LastName) select item;
 
-            return results;
+            return results ?? context.Authors;
         }
 
-        public IQueryable<Publisher> FindPublisher(string name)
+        public IQueryable<Publisher> FindPublishers(Publisher publisher)
         {
             IQueryable<Publisher> results = null;
-            results = from item in context.Publishers where item.Name.Contains(name) select item;
+            if(publisher.Name != null)
+                results = from item in context.Publishers where item.Name.Contains(publisher.Name) select item;
 
-            return results;
+            return results ?? context.Publishers;
         }
 
         public void Dispose() 

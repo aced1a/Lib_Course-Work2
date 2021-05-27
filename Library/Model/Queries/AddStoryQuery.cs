@@ -7,7 +7,7 @@ using Library.Models;
 
 namespace Library.Query
 {
-    class AddStoryQuery : IExecutableQuery
+    public class AddStoryQuery : IExecutableQuery
     {
         public Story Story { get; set; }
         public IEnumerable<Author> Authors { get; set; }

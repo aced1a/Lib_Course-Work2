@@ -6,8 +6,11 @@ namespace Library.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
     [Table("author")]
-    public partial class Author
+    public partial class Author : EntityBase
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Author()
@@ -27,9 +30,6 @@ namespace Library.Models
             LastName = author.LastName;
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity), Column("id")]
-        public int ID { get; set; }
-
         [StringLength(50), Column("first_name")]
         public string FirstName { get; set; }
 
@@ -45,16 +45,29 @@ namespace Library.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<StoryAuthor> AuthorStory { get; set; }
 
+        public override string ToString()
+        {
+            return $"{LastName} {FirstName} {MiddleName}";
+        }
+
         [NotMapped]
         public string FullName
         {
-            get => $"{LastName} {MiddleName} {FirstName}";
+            get => ToString();
         }
+
+        [NotMapped]
+        public string Name
+        {
+            get => ToString();
+        }
+
 
         [NotMapped]
         public string NumberOfBooks
         {
             get => $"({AuthorBook.Count})";
         }
+
     }
 }

@@ -12,17 +12,19 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Library.ViewModel;
 
 namespace Library.View
 {
     /// <summary>
-    /// Логика взаимодействия для AuthorSearch.xaml
+    /// Логика взаимодействия для BookSearch.xaml
     /// </summary>
-    public partial class AuthorSearch : UserControl
+    public partial class BookSearch : UserControl
     {
-        public AuthorSearch()
+        public BookSearch()
         {
             InitializeComponent();
         }
+
     }
 }

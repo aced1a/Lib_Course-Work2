@@ -24,5 +24,11 @@ namespace Library.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BookPublisher> BookPublisher { get; set; }
+
+        [NotMapped]
+        public string NumberOfBooks
+        {
+            get => $"({BookPublisher.Count})";
+        }
     }
 }

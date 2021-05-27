@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Library.View
 {
     /// <summary>
-    /// Логика взаимодействия для AuthorSearch.xaml
+    /// Логика взаимодействия для EditElement.xaml
     /// </summary>
-    public partial class AuthorSearch : UserControl
+    public partial class EditElement : UserControl
     {
-        public AuthorSearch()
+        public EditElement()
         {
             InitializeComponent();
         }

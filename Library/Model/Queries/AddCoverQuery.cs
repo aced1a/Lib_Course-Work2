@@ -7,7 +7,7 @@ using Library.Models;
 
 namespace Library.Query
 {
-    class AddCoverQuery : IExecutableQuery
+    public class AddCoverQuery : IExecutableQuery
     {
         public Cover Cover { get; set; }
         public Image Image { get; set; }

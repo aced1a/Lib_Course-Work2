@@ -24,6 +24,19 @@ namespace Library
             return query;
         }
 
+        public bool SaveChanges()
+        {
+            try
+            {
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool AddAuthor(Author author) 
         {
             context.Authors.Add(author);
@@ -156,16 +169,16 @@ namespace Library
                 try 
                 {
                     //ID always = 0
-                    if (query.AddingLocation != null) { query.Book.LocationID = AddLocation(query.AddingLocation); }
-                    if (query.AddingCover    != null) { query.Book.CoverID = AddCoverInBook(query.AddingCover); }
-                    if (query.AddingStories  != null) {
-                        foreach (var addingStory in query.AddingStories)
-                        {
-                            Story story = AddStoryInBook(addingStory);
-                            if(story != null)
-                                query.Stories.Append(story);
-                        }
-                    }
+                    //if (query.AddingLocation != null) { query.Book.LocationID = AddLocation(query.AddingLocation); }
+                    //if (query.AddingCover    != null) { query.Book.CoverID = AddCoverInBook(query.AddingCover); }
+                    //if (query.AddingStories  != null) {
+                    //    foreach (var addingStory in query.AddingStories)
+                    //    {
+                    //        Story story = AddStoryInBook(addingStory);
+                    //        if(story != null)
+                    //            query.Stories.Append(story);
+                    //    }
+                    //}
 
                     AddBook(query.Book);
                     AddRelationsForBook(query);
