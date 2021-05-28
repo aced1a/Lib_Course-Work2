@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 using System.Windows.Media.Animation;
 using Library.View;
 using Library.ViewModel;
-using Library.Models;
+using Library.Model.LibraryEntities;
 using Library.Query;
 using System.Collections.ObjectModel;
 

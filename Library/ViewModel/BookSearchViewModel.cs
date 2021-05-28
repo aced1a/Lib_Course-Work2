@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using Library.Models;
+using Library.Model.LibraryEntities;
 using Library.Query;
 using Library.View;
 
@@ -28,6 +28,7 @@ namespace Library.ViewModel
         string _beginYear, _endYear;
         string _coverTypeName, _bindingTypeName;
         string _locationName;
+        BookInfo _bookInfo;
 
         public BookSearchViewModel(IMainWindowCodeBehind codeBehind)
         {
@@ -216,7 +217,6 @@ namespace Library.ViewModel
                     Genres = SelectedGenres?.Count == 0 ? null : SelectedGenres,
                     Stories = SelectedStories?.Count == 0 ? null : SelectedStories,
                     Publishers = SelectedPublishers?.Count == 0 ? null : SelectedPublishers,
-                    ISBN = new ISBN() { isbn = this.ISBN },
                     BeginYear = int.TryParse(BeginYear, out year) ? (int?)year : null,
                     EndYear = int.TryParse(BeginYear, out year) ? (int?)year : null
                 }
@@ -229,11 +229,9 @@ namespace Library.ViewModel
             {
                 Title = BookName,
                 LocationID = Location?.ID,
-                Cover = new Cover
-                {
-                    BindingID = BindingType?.ID,
-                    CoverID = CoverType?.ID
-                }
+                BindingTypeID = BindingType?.ID,
+                CoverTypeID = CoverType?.ID,
+                ISBN = this.ISBN
             };
         }
 

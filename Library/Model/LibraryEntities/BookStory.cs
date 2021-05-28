@@ -1,4 +1,4 @@
-namespace Library.Models
+namespace Library.Model.LibraryEntities
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +10,6 @@ namespace Library.Models
     public partial class BookStory
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
         [Column("id")]
         public int ID { get; set; }
 

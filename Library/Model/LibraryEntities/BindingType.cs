@@ -1,4 +1,4 @@
-namespace Library.Models
+namespace Library.Model.LibraryEntities
 {
     using System;
     using System.Collections.Generic;
@@ -6,12 +6,13 @@ namespace Library.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
+    [Table("binding_type")]
     public partial class BindingType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public BindingType()
         {
-            Cover = new HashSet<Cover>();
+            Books = new HashSet<Book>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Column("id")]
@@ -22,6 +23,6 @@ namespace Library.Models
         public string Name { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Cover> Cover { get; set; }
+        public virtual ICollection<Book> Books { get; set; }
     }
 }

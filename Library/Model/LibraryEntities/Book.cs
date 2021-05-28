@@ -1,11 +1,11 @@
-namespace Library.Models
+ï»¿namespace Library.Model.LibraryEntities
 {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Text;
     using System.Data.Entity.Spatial;
+    using System.Text;
 
     [Table("book")]
     public partial class Book
@@ -15,7 +15,6 @@ namespace Library.Models
         {
             BookAuthor = new HashSet<BookAuthor>();
             BookGenre = new HashSet<BookGenre>();
-            ISBN = new HashSet<ISBN>();
             BookPublisher = new HashSet<BookPublisher>();
             BookStory = new HashSet<BookStory>();
         }
@@ -30,17 +29,28 @@ namespace Library.Models
         [Column("year")]
         public int? Year { get; set; }
 
-        [Column("description",TypeName = "text")]
+        [StringLength(13), Column("isbn")]
+        public string ISBN { get; set; }
+
+        [Column("description", TypeName = "text")]
         public string Description { get; set; }
 
-        [Column("note",TypeName = "text")]
+        [Column("note", TypeName = "text")]
         public string Note { get; set; }
 
         [Column("location_id")]
         public int? LocationID { get; set; }
 
         [Column("cover_id")]
-        public int? CoverID { get; set; }
+        public int? CoverTypeID { get; set; }
+
+        [Column("binding_id")]
+        public int? BindingTypeID { get; set; }
+
+        [Column("image", TypeName = "image")]
+        public byte[] Image { get; set; }
+
+        public virtual BindingType binding_type { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BookAuthor> BookAuthor { get; set; }
@@ -49,17 +59,16 @@ namespace Library.Models
         public virtual ICollection<BookGenre> BookGenre { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ISBN> ISBN { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BookPublisher> BookPublisher { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BookStory> BookStory { get; set; }
 
-        public virtual Cover Cover { get; set; }
+        public virtual CoverType CoverType { get; set; }
 
         public virtual Location Location { get; set; }
+
+
 
         [NotMapped]
         public string Authors
@@ -67,9 +76,9 @@ namespace Library.Models
             get
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("Àâòîðû: ");
+                sb.Append("ÐÐ²Ñ‚Ð¾Ñ€Ñ‹: ");
                 int i = 0, min = Math.Min(3, BookAuthor.Count);
-                foreach(var author in BookAuthor)
+                foreach (var author in BookAuthor)
                 {
                     sb.Append(author.Author.FullName); i++;
                     if (i >= min) break;
@@ -85,7 +94,7 @@ namespace Library.Models
             get
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("Æàíðû: ");
+                sb.Append("Ð–Ð°Ð½Ñ€Ñ‹: ");
                 int i = 0, min = Math.Min(3, BookGenre.Count);
                 foreach (var genre in BookGenre)
                 {

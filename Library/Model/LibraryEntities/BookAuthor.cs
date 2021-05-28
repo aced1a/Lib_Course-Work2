@@ -1,4 +1,4 @@
-namespace Library.Models
+namespace Library.Model.LibraryEntities
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +10,6 @@ namespace Library.Models
     public partial class BookAuthor
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
         [Column("id")]
         public int ID { get; set; }
 
@@ -20,9 +19,11 @@ namespace Library.Models
         [Column("author_id")]
         public int AuthorID { get; set; }
 
+        [Column("from_story")]
+        public bool? IsFromStory { get; set; }
+
         public virtual Author Author { get; set; }
 
-        //[ForeignKey(nameof(BookID))]
         public virtual Book Book { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-namespace Library.Models
+namespace Library.Model.LibraryEntities
 {
     using System;
     using System.Collections.Generic;
@@ -14,7 +14,6 @@ namespace Library.Models
         {
             BookPublisher = new HashSet<BookPublisher>();
         }
-
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Column("id")]
         public int ID { get; set; }
 

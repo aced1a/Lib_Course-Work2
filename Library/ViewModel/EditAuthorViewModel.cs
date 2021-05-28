@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using Library.Models;
+using Library.Model.LibraryEntities;
 
 
 namespace Library.ViewModel
@@ -73,11 +73,16 @@ namespace Library.ViewModel
         private void SaveChanges()
         {
             if (Author.ID != -1)
+            {
                 _mainCodeBehind?.SaveChanges();
+                update?.Invoke(Author);
+            }
             else
+            {
                 _mainCodeBehind?.Add(Author);
-            update?.Invoke(Author);
-            Author = new Author();
+                update?.Invoke(Author);
+                Author = new Author() { ID = -1 };
+            }
         }
     }
 }

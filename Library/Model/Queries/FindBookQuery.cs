@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Library.Models;
+using Library.Model.LibraryEntities;
 
 namespace Library.Query
 {
@@ -15,8 +15,7 @@ namespace Library.Query
         public IEnumerable<Genre> Genres { get; set; }
         public IEnumerable<Story> Stories { get; set; }
         public IEnumerable<Publisher> Publishers { get; set; }
-        public ISBN ISBN { get; set; }
-        public Cover Cover { get; set; }
+
         public Location Location { get; set; }
 
         public IQueryable<Book> Results { get; private set; }

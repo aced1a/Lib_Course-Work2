@@ -1,4 +1,4 @@
-namespace Library.Models
+namespace Library.Model.LibraryEntities
 {
     using System;
     using System.Collections.Generic;
@@ -6,11 +6,8 @@ namespace Library.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     [Table("author")]
-    public partial class Author : EntityBase
+    public partial class Author
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Author()
@@ -19,17 +16,10 @@ namespace Library.Models
             AuthorStory = new HashSet<StoryAuthor>();
         }
 
-        public Author(Author author)
-        {
-            AuthorBook = new HashSet<BookAuthor>();
-            AuthorStory = new HashSet<StoryAuthor>();
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key]
+        public int ID { get; set; }
 
-            ID = author.ID;
-            FirstName = author.FirstName; 
-            MiddleName = author.MiddleName;
-            LastName = author.LastName;
-        }
-
+       
         [StringLength(50), Column("first_name")]
         public string FirstName { get; set; }
 
@@ -68,6 +58,5 @@ namespace Library.Models
         {
             get => $"({AuthorBook.Count})";
         }
-
     }
 }

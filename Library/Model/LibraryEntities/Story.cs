@@ -1,4 +1,4 @@
-namespace Library.Models
+namespace Library.Model.LibraryEntities
 {
     using System;
     using System.Collections.Generic;
@@ -15,7 +15,6 @@ namespace Library.Models
             BookStory = new HashSet<BookStory>();
             StoryAuthor = new HashSet<StoryAuthor>();
         }
-
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Column("id")]
         public int ID { get; set; }
 
@@ -23,13 +22,13 @@ namespace Library.Models
         [StringLength(50), Column("title")]
         public string Title { get; set; }
 
-        [NotMapped]
-        public string Name { get => Title; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BookStory> BookStory { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<StoryAuthor> StoryAuthor { get; set; }
+
+        [NotMapped]
+        public string Name { get => Title; }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using Library.Models;
+using Library.Model.LibraryEntities;
 
 namespace Library.ViewModel
 {

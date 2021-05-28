@@ -1,4 +1,4 @@
-namespace Library.Models
+namespace Library.Model.LibraryEntities
 {
     using System;
     using System.Collections.Generic;
@@ -12,20 +12,20 @@ namespace Library.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Location()
         {
-            Book = new HashSet<Book>();
+            Books = new HashSet<Book>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Column("id")]
         public int ID { get; set; }
 
-        [StringLength(50), Column("")]
+        [StringLength(50), Column("rack")]
         public string Rack { get; set; }
 
         [Column("shelf")]
         public int? Shelf { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Book> Book { get; set; }
+        public virtual ICollection<Book> Books { get; set; }
 
         [NotMapped]
         public string Name
@@ -37,7 +37,7 @@ namespace Library.Models
         [NotMapped]
         public string NumberOfBooks
         {
-            get => $"({Book.Count})";
+            get => $"({Books.Count})";
         }
     }
 }

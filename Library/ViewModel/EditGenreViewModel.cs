@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using Library.Models;
+using Library.Model.LibraryEntities;
 
 namespace Library.ViewModel
 {
@@ -56,7 +56,7 @@ namespace Library.ViewModel
             else
                 _mainCodeBehind?.Add(Item);
             update?.Invoke(Item);
-            Item = new Genre();
+            Item = new Genre() { ID = -1 };
         }
     }
 }

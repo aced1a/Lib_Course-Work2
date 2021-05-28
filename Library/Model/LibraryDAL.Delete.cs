@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Library.Query;
-using Library.Models;
+using Library.Model.LibraryEntities;
 
 namespace Library
 {

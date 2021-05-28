@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 
-namespace Library.Models
+namespace Library.Model.LibraryEntities
 {
     public partial class LibraryEntities : DbContext
     {
@@ -15,19 +15,16 @@ namespace Library.Models
         public virtual DbSet<Author> Authors { get; set; }
         public virtual DbSet<BindingType> BindingTypes { get; set; }
         public virtual DbSet<Book> Books { get; set; }
-        public virtual DbSet<BookAuthor> BooksAuthors { get; set; }
-        public virtual DbSet<BookGenre> BooksGenres { get; set; }
-        public virtual DbSet<BookPublisher> BooksPublishers { get; set; }
-        public virtual DbSet<BookStory> BooksStories { get; set; }
-        public virtual DbSet<Cover> Covers { get; set; }
+        public virtual DbSet<BookAuthor> BookAuthors { get; set; }
+        public virtual DbSet<BookGenre> BookGenres { get; set; }
+        public virtual DbSet<BookPublisher> BookPublishers { get; set; }
+        public virtual DbSet<BookStory> BookStories { get; set; }
         public virtual DbSet<CoverType> CoverTypes { get; set; }
         public virtual DbSet<Genre> Genres { get; set; }
-        public virtual DbSet<Image> Images { get; set; }
-        public virtual DbSet<ISBN> ISBNs { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
         public virtual DbSet<Publisher> Publishers { get; set; }
         public virtual DbSet<Story> Stories { get; set; }
-        public virtual DbSet<StoryAuthor> StoriesAuthors { get; set; }
+        public virtual DbSet<StoryAuthor> StoryAuthors { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -58,12 +55,16 @@ namespace Library.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<BindingType>()
-                .HasMany(e => e.Cover)
-                .WithOptional(e => e.BindingType)
-                .HasForeignKey(e => e.BindingID);
+                .HasMany(e => e.Books)
+                .WithOptional(e => e.binding_type)
+                .HasForeignKey(e => e.BindingTypeID);
 
             modelBuilder.Entity<Book>()
                 .Property(e => e.Title)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Book>()
+                .Property(e => e.ISBN)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Book>()
@@ -85,11 +86,6 @@ namespace Library.Models
                 .HasForeignKey(e => e.BookID);
 
             modelBuilder.Entity<Book>()
-                .HasMany(e => e.ISBN)
-                .WithRequired(e => e.Book)
-                .HasForeignKey(e => e.BookID);
-
-            modelBuilder.Entity<Book>()
                 .HasMany(e => e.BookPublisher)
                 .WithRequired(e => e.Book)
                 .HasForeignKey(e => e.BookID);
@@ -99,19 +95,14 @@ namespace Library.Models
                 .WithRequired(e => e.Book)
                 .HasForeignKey(e => e.BookID);
 
-            modelBuilder.Entity<Cover>()
-                .HasMany(e => e.Book)
-                .WithOptional(e => e.Cover)
-                .HasForeignKey(e => e.CoverID);
-
             modelBuilder.Entity<CoverType>()
                 .Property(e => e.Name)
                 .IsUnicode(false);
 
             modelBuilder.Entity<CoverType>()
-                .HasMany(e => e.Cover)
+                .HasMany(e => e.Books)
                 .WithOptional(e => e.CoverType)
-                .HasForeignKey(e => e.CoverID);
+                .HasForeignKey(e => e.CoverTypeID);
 
             modelBuilder.Entity<Genre>()
                 .Property(e => e.Name)
@@ -122,21 +113,12 @@ namespace Library.Models
                 .WithRequired(e => e.Genre)
                 .HasForeignKey(e => e.GenreID);
 
-            modelBuilder.Entity<Image>()
-                .HasMany(e => e.Cover)
-                .WithOptional(e => e.Image)
-                .HasForeignKey(e => e.ImageID);
-
-            modelBuilder.Entity<ISBN>()
-                .Property(e => e.isbn)
-                .IsUnicode(false);
-
             modelBuilder.Entity<Location>()
                 .Property(e => e.Rack)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Location>()
-                .HasMany(e => e.Book)
+                .HasMany(e => e.Books)
                 .WithOptional(e => e.Location)
                 .HasForeignKey(e => e.LocationID);
 
