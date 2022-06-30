@@ -31,6 +31,7 @@ namespace Library.ViewModel
             }
         }
 
+
         private Author _selectedAuthor;
         public Author SelectedAuthor
         {
@@ -77,8 +78,47 @@ namespace Library.ViewModel
         {
             _mainCodeBehind = codeBehind;
             updateSelectedAuthors += action;
+            sortAscending = false;
         }
 
+        RelayCommand _exportToExcelCommand;
+        public RelayCommand ExportToExcelCommand
+        {
+            get => _exportToExcelCommand = _exportToExcelCommand ?? new RelayCommand(ExportToExcel);
+        }
+
+        void ExportToExcel()
+        {
+            if (Authors.Count > 0)
+            {
+                var export = new ExcelExporter();
+                export.ExportToExcel(Authors);
+            }
+        }
+
+        bool sortAscending;
+        RelayCommand _sortCommand;
+        public RelayCommand SortCommand
+        {
+            get => _sortCommand = _sortCommand ?? new RelayCommand(Sort);
+        }
+
+        void Sort()
+        {
+            sortAscending = !sortAscending;
+            var a = System.Windows.Data.CollectionViewSource.GetDefaultView(Authors);
+            a.SortDescriptions.Clear();
+
+            if (sortAscending) {
+                a.SortDescriptions.Add(new SortDescription("FullName",ListSortDirection.Ascending));
+            }
+            else
+            {
+                a.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Descending));
+            }
+            a.Refresh();
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Authors)));
+        }
 
         RelayCommand _findAuthorsCommand;
         public RelayCommand FindAuthorsCommand
@@ -148,7 +188,7 @@ namespace Library.ViewModel
 
         private void OpenEditWindow(Author author)
         {
-            SubsidiarySearchWindow window = new SubsidiarySearchWindow();
+            SubsidiarySearchWindow window = new SubsidiarySearchWindow() { Width=700, Height=200};
             EditAuthor view = new EditAuthor();
             EditAuthorViewModel vm = new EditAuthorViewModel(author, _mainCodeBehind, UpdateItems);
             view.DataContext = vm;
@@ -159,16 +199,18 @@ namespace Library.ViewModel
 
         private void UpdateItems(Author item)
         {
-            if (item != null && Authors.Contains(item) == false)
-            {
-                Authors.Add(item);
+            if (item != null) { 
+                if (Authors.Contains(item) == false)
+                {
+                    Authors.Add(item);
+                }
+                else
+                {
+                    Authors.Remove(item);
+                    Authors.Add(item);
+                }
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Authors)));
             }
-            else
-            {
-                Authors.Remove(item);
-                Authors.Add(item);
-            }
-            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Authors)));
         }
     }
 }

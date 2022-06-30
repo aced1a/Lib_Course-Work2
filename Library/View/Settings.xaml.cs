@@ -16,20 +16,13 @@ using System.Windows.Shapes;
 namespace Library.View
 {
     /// <summary>
-    /// Логика взаимодействия для LocationSearch.xaml
+    /// Логика взаимодействия для Settings.xaml
     /// </summary>
-    public partial class LocationSearch : UserControl
+    public partial class Settings : UserControl
     {
-        public LocationSearch()
+        public Settings()
         {
             InitializeComponent();
-        }
-        private void DigitInput(object sender, TextCompositionEventArgs e)
-        {
-            if (Char.IsDigit(e.Text, 0) == false)
-            {
-                e.Handled = true;
-            }
         }
     }
 }

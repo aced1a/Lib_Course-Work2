@@ -24,5 +24,21 @@ namespace Library.View
         {
             InitializeComponent();
         }
+
+        private void YearTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (Char.IsDigit(e.Text, 0) == false)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void ISBN_Input(object sender, TextCompositionEventArgs e)
+        {
+            if ((sender as TextBox)?.Text.Length > 12)
+            {
+                e.Handled = true;
+            }
+        }
     }
 }

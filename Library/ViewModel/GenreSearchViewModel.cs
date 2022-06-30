@@ -121,7 +121,7 @@ namespace Library.ViewModel
 
         private void OpenEditWindow(Genre genre)
         {
-            SubsidiarySearchWindow window = new SubsidiarySearchWindow();
+            SubsidiarySearchWindow window = new SubsidiarySearchWindow() { Width = 600, Height = 200 };
             EditElement view = new EditElement();
             EditGenreViewModel vm = new EditGenreViewModel(genre, _mainCodeBehind, UpdateItems);
             view.DataContext = vm;
@@ -143,6 +143,46 @@ namespace Library.ViewModel
                 Genres.Add(item);
             }
             PropertyChanged(this, new PropertyChangedEventArgs(nameof(Genres)));
+        }
+
+        bool sortAscending;
+        RelayCommand _sortCommand;
+        public RelayCommand SortCommand
+        {
+            get => _sortCommand = _sortCommand ?? new RelayCommand(Sort);
+        }
+
+        void Sort()
+        {
+            sortAscending = !sortAscending;
+            var a = System.Windows.Data.CollectionViewSource.GetDefaultView(Genres);
+            a.SortDescriptions.Clear();
+
+            if (sortAscending)
+            {
+                a.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+            }
+            else
+            {
+                a.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Descending));
+            }
+            a.Refresh();
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Genres)));
+        }
+
+        RelayCommand _exportToExcelCommand;
+        public RelayCommand ExportToExcelCommand
+        {
+            get => _exportToExcelCommand = _exportToExcelCommand ?? new RelayCommand(ExportToExcel);
+        }
+
+        void ExportToExcel()
+        {
+            if (Genres.Count > 0)
+            {
+                var export = new ExcelExporter();
+                export.ExportToExcel(Genres);
+            }
         }
     }
 }

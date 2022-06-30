@@ -121,7 +121,7 @@ namespace Library.ViewModel
 
         private void OpenEditWindow(Publisher publisher)
         {
-            SubsidiarySearchWindow window = new SubsidiarySearchWindow();
+            SubsidiarySearchWindow window = new SubsidiarySearchWindow() { Width = 600, Height = 200 };
             EditElement view = new EditElement();
             EditPublisherViewModel vm = new EditPublisherViewModel(publisher, _mainCodeBehind, UpdateItems);
             view.DataContext = vm;
@@ -143,6 +143,46 @@ namespace Library.ViewModel
                 Publishers.Add(item);
             }
             PropertyChanged(this, new PropertyChangedEventArgs(nameof(Publishers)));
+        }
+
+        bool sortAscending;
+        RelayCommand _sortCommand;
+        public RelayCommand SortCommand
+        {
+            get => _sortCommand = _sortCommand ?? new RelayCommand(Sort);
+        }
+
+        void Sort()
+        {
+            sortAscending = !sortAscending;
+            var a = System.Windows.Data.CollectionViewSource.GetDefaultView(Publishers);
+            a.SortDescriptions.Clear();
+
+            if (sortAscending)
+            {
+                a.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+            }
+            else
+            {
+                a.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Descending));
+            }
+            a.Refresh();
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Publishers)));
+        }
+
+        RelayCommand _exportToExcelCommand;
+        public RelayCommand ExportToExcelCommand
+        {
+            get => _exportToExcelCommand = _exportToExcelCommand ?? new RelayCommand(ExportToExcel);
+        }
+
+        void ExportToExcel()
+        {
+            if (Publishers.Count > 0)
+            {
+                var export = new ExcelExporter();
+                export.ExportToExcel(Publishers);
+            }
         }
     }
 }

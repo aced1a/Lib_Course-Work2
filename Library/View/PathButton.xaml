@@ -11,6 +11,7 @@
 
     <Button x:Name="button" Style="{StaticResource ASideButtonStyle}" Template="{StaticResource ButtonTemplate}">
         <StackPanel Orientation="Vertical">
+
             <ContentControl x:Name="buttonSurface"/>
             <Label x:Name="buttonCaption"/>
         </StackPanel>

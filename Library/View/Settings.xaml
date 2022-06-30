@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Library.View.Settings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Library.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="500"
+             Height="400" Width="500">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Label Content="Текущее подключение" Margin="10,0,10,0"
+                FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+            <ComboBox Height="30" Width="200" ItemsSource="{Binding Connections}" SelectedItem="{Binding SelectedConnection}" Margin="0,0,30,0"/>
+            <local:PathButton Icon="{StaticResource ChangeIcon}" Command="{Binding SelectConnectionCommand}"
+                VerticalAlignment="Center" Margin="0,10,0,0"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1">
+            <Label Content="Добавить подключение:" FontSize="18" FontWeight="Bold" />
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Название подключения" FontSize="18" FontWeight="Bold" Margin="0,0,10,0" />
+                <TextBox Text="{Binding ConnectionName}" Style="{StaticResource TextBoxStyle}" Width="205"/>
+                <local:PathButton Icon="{StaticResource PlusIcon}" Command="{Binding AddConnectionCommand}"
+                    VerticalAlignment="Center" Margin="10,10,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Провайдер:" FontSize="18" FontWeight="Bold" Margin="113,0,10,0" />
+                <TextBox Text="{Binding Provider}" Style="{StaticResource TextBoxStyle}" Width="200"/>
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Строка подключения:" FontSize="18" FontWeight="Bold" Margin="0,0,10,0" />
+                <TextBox Text="{Binding ConnectionString}" Style="{StaticResource TextBoxStyle}" Width="400" Height="100" TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

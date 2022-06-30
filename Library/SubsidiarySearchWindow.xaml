@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Library"
         mc:Ignorable="d"
-        Title="SubsidiarySearchWindow" Height="600" Width="720">
+        Title="SubsidiarySearchWindow" >
     <Grid>
-        <ContentPresenter Grid.Column="1" x:Name="OutputView" VerticalAlignment="Top" HorizontalAlignment="Stretch" Width="720"/>
+        <ContentPresenter Grid.Column="1" x:Name="OutputView" 
+            VerticalAlignment="Top" HorizontalAlignment="Stretch"
+           />
     </Grid>
 </Window>

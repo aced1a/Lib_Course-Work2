@@ -7,24 +7,9 @@ using Library.Model.LibraryEntities;
 
 namespace Library.Query
 {
-    public class FindStoryQuery : IExecutableQuery
+    public class FindStoryQuery 
     {
         public Story Story { get; set; }
         public IEnumerable<Author> Authors { get; set; }
-
-
-        public IQueryable<Story> Results { get; private set; }
-
-        public event QueryExecuted ExecuteQuery;
-        public bool Execute()
-        {
-            if (ExecuteQuery != null)
-            {
-                Results = ExecuteQuery.Invoke(this) as IQueryable<Story>;
-                if (Results != null)
-                    return true;
-            }
-            return false;
-        }
     }
 }

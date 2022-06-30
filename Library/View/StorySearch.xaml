@@ -24,7 +24,7 @@
             <TextBox x:Name="genreName"  Text="{Binding StoryName}"
                 Style="{StaticResource TextBoxStyle}" Margin="160,10,140,0"
                 Grid.Column="0" Grid.Row="0" Height="22" VerticalAlignment="Top"/>
-            <local:PathButton 
+            <local:PathButton
                     Command="{Binding FindStoriesCommand, Mode=OneTime}" Grid.Row="2" 
                     Icon="{StaticResource SearchIcon}"
                     Margin="0,5,31,0" HorizontalAlignment="Right"/>
@@ -51,16 +51,39 @@
                  SelectedItem="{Binding SelectedStory}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                            <Label Content="{Binding Path=Title}"
-                               FontSize="16" FontWeight="Bold"
-                               HorizontalAlignment="Center"/>
-                            <Label Content="{Binding Path=NumberOfBooks}" Foreground="Gray"/>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <Label Content="{Binding Path=Story.Title}"
+                                   FontSize="16" FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                            </StackPanel>
+                            <Label Content="{Binding Path=AuthorsText}" FontSize="12"  Foreground="Gray"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <StackPanel Grid.Column="1"/>
+            <StackPanel Grid.Column="1">
+                <local:PathButton
+                    Command="{Binding AddStoryCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
+                    Icon="{StaticResource PlusIcon}"
+                    />
+                <local:PathButton
+                    Command="{Binding EditStoryCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
+                    Icon="{StaticResource ChangeIcon}"
+                    />
+                <local:PathButton
+                    Command="{Binding DeleteStoryCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
+                    Icon="{StaticResource MinusIcon}"
+                    />
+                <local:PathButton
+                    Command="{Binding SortCommand, Mode=OneTime}"
+                    Icon="{StaticResource SortIcon}"
+                    />
+                <local:PathButton
+                    Command="{Binding ExportToExcelCommand, Mode=OneTime}"
+                    Icon="{StaticResource TableIcon}"
+                    />
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

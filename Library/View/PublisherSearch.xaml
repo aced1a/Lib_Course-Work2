@@ -52,16 +52,24 @@
             </ListBox>
             <StackPanel Grid.Column="1">
                 <local:PathButton
-                    Command="{Binding AddPublisherCommand, Mode=OneTime}"
+                    Command="{Binding AddPublisherCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
                     Icon="{StaticResource PlusIcon}"
                     />
                 <local:PathButton
-                    Command="{Binding ChangePublisherCommand, Mode=OneTime}"
+                    Command="{Binding ChangePublisherCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
                     Icon="{StaticResource ChangeIcon}"
                     />
                 <local:PathButton
-                    Command="{Binding DeletePublisherCommand, Mode=OneTime}"
+                    Command="{Binding DeletePublisherCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
                     Icon="{StaticResource MinusIcon}"
+                    />
+                <local:PathButton
+                    Command="{Binding SortCommand, Mode=OneTime}"
+                    Icon="{StaticResource SortIcon}"
+                    />
+                <local:PathButton
+                    Command="{Binding ExportToExcelCommand, Mode=OneTime}"
+                    Icon="{StaticResource TableIcon}"
                     />
             </StackPanel>
         </Grid>

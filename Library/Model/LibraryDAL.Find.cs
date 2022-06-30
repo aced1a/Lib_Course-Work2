@@ -12,108 +12,81 @@ namespace Library
     {
         LibraryEntities context;
 
-        public LibraryEntities Context { get => context; }
-
-        public IEnumerable<Author> Authors { get => context.Authors; }
-        public IEnumerable<Genre> Genres { get => context.Genres; }
-        public IEnumerable<Publisher> Publishers { get => context.Publishers; }
-        public IEnumerable<Book> Books { get => context.Books; }
-
-
         public LibraryDAL()
         {
-            context = new LibraryEntities();
+            string name = $"name={System.Configuration.ConfigurationManager.AppSettings["currentConnection"] ?? "LibraryEntities"}";
+            LibraryEntities.Init();
+            context = new LibraryEntities(name);
         }
 
-        public FindBookQuery CreateFindBookQuery()
+        public IEnumerable<Book> FindBook(FindBookQuery query)
         {
-            var query = new FindBookQuery();
-            query.ExecuteQuery += new QueryExecuted(FindBookWithQuery);
-            return query;
-        }
+            IEnumerable<Book> results = null;
 
-        private object FindBookWithQuery(IExecutableQuery query)
-        {
-            var r = query as FindBookQuery;
-            if (r != null)
-                return FindBook(r);
-            return null;
-        }
-
-        public FindStoryQuery CreateFindStoryQuery()
-        {
-            var query = new FindStoryQuery();
-            query.ExecuteQuery += new QueryExecuted(FindStoryWithQuery);
-            return query;
-        }
-
-        private object FindStoryWithQuery(IExecutableQuery query)
-        {
-            var r = query as FindStoryQuery;
-            if (r != null)
-                return FindStory(r);
-            return null;
-        }
-
-
-        public IQueryable<Book> FindBook(FindBookQuery query)
-        {
-            IQueryable<Book> results = null;
-
-            if (query.Book != null) FindBookByInfo(query.Book, results);
-            if (query.Location != null) FindBookByLocation(query.Location, results);
-            if (query.Genres != null) FindBookByGenres(query.Genres, results);
-            if (query.Stories != null) FindBookByStory(query.Stories, results);
-            if (query.Authors != null) FindBookByAuthor(query.Authors, results);
-            if (query.Publishers != null) FindBookByPublisher(query.Publishers, results);
+            if (query.Book != null) results = FindBookByInfo(query.Book);
+           
+            if (query.BeginYear != null || query.EndYear != null) results = FindBookByYear(query, results);
+            if (query.Genres != null) results = FindBookByGenres(query.Genres, results);
+            if (query.Stories != null) results = FindBookByStory(query.Stories, results);
+            if (query.Authors != null) results = FindBookByAuthor(query.Authors, results);
+            if (query.Publishers != null) results = FindBookByPublisher(query.Publishers, results);
 
             return results ?? context.Books;
         }
 
-        public void FindBookByInfo(Book book, IQueryable<Book> books=null)
+        IQueryable<Book> FindBookByInfo(Book book)
         {
+            IQueryable<Book> books = null;
+
             if (book.Title != null)
                 books = from item in (books ?? context.Books) where item.Title.ToLower().Contains(book.Title.ToLower()) select item;
             if (book.Year != null)
                 books = from item in (books ?? context.Books) where item.Year == book.Year select item;
+            if (book.ISBN != null)
+                books = from item in (books ?? context.Books) where item.ISBN == book.ISBN select item;
             if (book.CoverTypeID != null)
                 books = from item in (books ?? context.Books) where item.CoverTypeID == book.CoverTypeID select item;
             if (book.BindingTypeID != null)
                 books = from item in (books ?? context.Books) where item.BindingTypeID == book.BindingTypeID select item;
             if (book.LocationID != null)
-                books = from item in (books ?? context.Books) where item.LocationID == book.LocationID select item;    
+                books = from item in (books ?? context.Books) where item.LocationID == book.LocationID select item;
+
+            return books;
         }
 
-        public void FindBookByGenres(IEnumerable<Genre> genres, IQueryable<Book> books = null)
+        IEnumerable<Book> FindBookByYear(FindBookQuery query, IEnumerable<Book> books =null) {
+            query.BeginYear = query.BeginYear ?? query.EndYear;
+            query.EndYear = query.EndYear ?? query.BeginYear;
+
+            return from item in (books ?? context.Books) where item.Year >= query.BeginYear && item.Year <= query.EndYear select item;
+        }
+		
+        IEnumerable<Book> FindBookByGenres(IEnumerable<Genre> genres, IEnumerable<Book> books = null)
         {
-            books = (books ?? context.Books).Join(
-                context.BookGenres.Join(genres, bg => bg.GenreID, g => g.ID, (bg, g) => bg.Book).Distinct(),
-                b => b.ID, i => i.ID, (b,i) => b
-            );
+            var res = context.BookGenres.AsEnumerable().Join(genres, bg => bg.GenreID, g => g.ID, (bg, g) => bg.Book).Distinct();
+            return books != null ? books.Join(res, b => b.ID, i => i.ID, (b, i) => b) : res;
         }
 
-        public void FindBookByAuthor(IEnumerable<Author> authors, IQueryable<Book> books = null)
+        IEnumerable<Book> FindBookByAuthor(IEnumerable<Author> authors, IEnumerable<Book> books = null)
         {
-            books = context.BookAuthors.Join(authors, ab => ab.AuthorID, a => a.ID, (ab, a) => ab.Book).Distinct();
-            //books = context.BooksAuthors.Join(authors, ab => ab.AuthorID, a => a.ID, (ab, a) => ab.Book).GroupBy(a => a.ID).OrderBy(a => a.Count()).Select(a => a.First());
+            var res = context.BookAuthors.AsEnumerable().Join(authors, ba => ba.AuthorID, a => a.ID, (ba, a) => ba.Book).Distinct();
+            return books != null ? books.Join(res, b => b.ID, i => i.ID, (b, i) => b) : res;
+
         }
 
-        public void FindBookByStory(IEnumerable<Story> stories, IQueryable<Book> books = null)
+        IEnumerable<Book> FindBookByStory(IEnumerable<Story> stories, IEnumerable<Book> books = null)
         {
-            books = context.BookStories.Join(stories, ab => ab.StoryID, s => s.ID, (ab, s) => ab.Book).Distinct();
+            var res = context.BookStories.AsEnumerable().Join(stories, ab => ab.StoryID, s => s.ID, (ab, s) => ab.Book).Distinct();
+            return books != null ? books.Join(res, b => b.ID, i => i.ID, (b, i) => b) : res;
+
         }
 
-        public void FindBookByPublisher(IEnumerable<Publisher> publishers, IQueryable<Book> books = null) 
+        IEnumerable<Book> FindBookByPublisher(IEnumerable<Publisher> publishers, IEnumerable<Book> books = null) 
         {
-            books = context.BookPublishers.Join(publishers, bs => bs.PublisherID, p => p.ID, (bs, p) => bs.Book).Distinct();
+            var res = context.BookPublishers.AsEnumerable().Join(publishers, bs => bs.PublisherID, p => p.ID, (bs, p) => bs.Book).Distinct();
+            return books != null ? books.Join(res, b => b.ID, i => i.ID, (b, i) => b) : res;
         }
 
-        
-        private void FindBookByLocation(Location location, IQueryable<Book> books)
-        {
-            var res = FindLocation(location);
-            books = res.Join((books != null ? books : context.Books), l => l.ID, b => b.LocationID, (l, b) => b);
-        }
 
         public IQueryable<Location> FindLocation(Location location) 
         {
@@ -124,7 +97,7 @@ namespace Library
             if (location.Shelf != null)
                 results = from item in (results ?? context.Locations) where item.Shelf == location.Shelf select item;
 
-            return results;
+            return results ?? context.Locations;
         }
 
 
@@ -146,24 +119,25 @@ namespace Library
             return results ?? context.BindingTypes;
         }
 
-        public IQueryable<Story> FindStory(FindStoryQuery query)
+        public IEnumerable<Story> FindStory(FindStoryQuery query)
         {
-            IQueryable<Story> results = null;
+            IEnumerable<Story> results = null;
 
-            if (query.Story != null) FindStoryByInfo(query.Story, results);
-            if (query.Authors != null) FindStoryByAuthor(query.Authors, results);
+            if (query.Story?.Title != null) results = FindStoryByInfo(query.Story);
+            if (query.Authors != null) results = FindStoryByAuthor(query.Authors, results);
 
             return results ?? context.Stories;
         }
 
-        public void FindStoryByInfo(Story story, IQueryable<Story> stories) 
+        IQueryable<Story> FindStoryByInfo(Story story) 
         {
-            stories = from item in (stories ?? context.Stories) where item.Title.ToLower().Contains(story.Title.ToLower()) select item;
+            return from item in context.Stories where item.Title.ToLower().Contains(story.Title.ToLower()) select item;
         }
 
-        public void FindStoryByAuthor(IEnumerable<Author> authors, IQueryable<Story> stories = null)
+        IEnumerable<Story> FindStoryByAuthor(IEnumerable<Author> authors, IEnumerable<Story> stories = null)
         {
-            stories = context.StoryAuthors.Join(authors, s => s.AuthorID, a => a.ID, (s, a) => s.Story);
+            var res = stories = context.StoryAuthors.AsEnumerable().Join(authors, s => s.AuthorID, a => a.ID, (s, a) => s.Story).Distinct();
+            return stories != null ? stories.Join(res, b => b.ID, i => i.ID, (b, i) => b) : res;
         }
 
         public IQueryable<Genre> FindGenre(Genre genre)

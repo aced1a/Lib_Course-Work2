@@ -51,17 +51,25 @@
             </ListBox>
             <StackPanel Grid.Column="1">
                 <local:PathButton
-                    Command="{Binding AddBindingTypeCommand, Mode=OneTime}"
+                    Command="{Binding AddBindingTypeCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
                     Icon="{StaticResource PlusIcon}"
                     />
                 <local:PathButton
-                    Command="{Binding ChangeBindingTypeCommand, Mode=OneTime}"
+                    Command="{Binding ChangeBindingTypeCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
                     Icon="{StaticResource ChangeIcon}"
                     />
                 <local:PathButton
-                    Command="{Binding DeleteBindingTypeCommand, Mode=OneTime}"
+                    Command="{Binding DeleteBindingTypeCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
                     Icon="{StaticResource MinusIcon}"
                     />
+                <local:PathButton
+                    Command="{Binding SortCommand, Mode=OneTime}"
+                    Icon="{StaticResource SortIcon}"
+                    />
+                <local:PathButton
+                Command="{Binding ExportToExcelCommand, Mode=OneTime}"
+                Icon="{StaticResource TableIcon}"
+                />
             </StackPanel>
         </Grid>
     </Grid>

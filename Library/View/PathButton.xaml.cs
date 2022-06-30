@@ -77,6 +77,25 @@ namespace Library.View
         }
 
 
+        public static DependencyProperty CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(PathButton), new FrameworkPropertyMetadata(new PropertyChangedCallback(CommandParameter_Changed)));
+
+        public object CommandParameter
+        {
+            get { return (object)GetValue(CommandParameterProperty); }
+            set { SetValue(CommandParameterProperty, value); }
+        }
+
+        private static void CommandParameter_Changed(DependencyObject o, DependencyPropertyChangedEventArgs args)
+        {
+            PathButton thisClass = o as PathButton;
+            thisClass?.SetCommandParameter();
+        }
+
+        private void SetCommandParameter()
+        {
+            button.CommandParameter = CommandParameter;
+        }
+
         public PathButton()
         {
             InitializeComponent();

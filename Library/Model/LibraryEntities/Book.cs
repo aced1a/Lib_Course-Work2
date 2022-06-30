@@ -50,7 +50,6 @@
         [Column("image", TypeName = "image")]
         public byte[] Image { get; set; }
 
-        public virtual BindingType binding_type { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BookAuthor> BookAuthor { get; set; }
@@ -63,48 +62,66 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BookStory> BookStory { get; set; }
-
+      
+        public virtual BindingType BindingType { get; set; }
         public virtual CoverType CoverType { get; set; }
-
         public virtual Location Location { get; set; }
 
-
-
+        
         [NotMapped]
         public string Authors
         {
             get
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("Авторы: ");
-                int i = 0, min = Math.Min(3, BookAuthor.Count);
                 foreach (var author in BookAuthor)
                 {
-                    sb.Append(author.Author.FullName); i++;
-                    if (i >= min) break;
-                    sb.Append(", ");
+                    sb.Append($"{author.Author.FullName} ");
                 }
-                if (min > 3) sb.Append(" ...");
                 return sb.ToString();
             }
         }
-
+        [NotMapped]
         public string Genres
         {
             get
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("Жанры: ");
-                int i = 0, min = Math.Min(3, BookGenre.Count);
-                foreach (var genre in BookGenre)
+                foreach (var item in BookGenre)
                 {
-                    sb.Append(genre.Genre.Name); i++;
-                    if (i >= min) break;
-                    sb.Append(", ");
+                    sb.Append($"{item.Genre.Name} ");
                 }
-                if (min > 3) sb.Append(" ...");
                 return sb.ToString();
             }
         }
+
+        [NotMapped]
+        public string Publishers
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in BookPublisher)
+                {
+                    sb.Append($"{item.Publisher.Name} ");
+                }
+                return sb.ToString();
+            }
+        }        
+
+        [NotMapped]
+        public string Stories
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in BookStory)
+                {
+                    sb.Append($"{item.Story.Name} ");
+                }
+                return sb.ToString();
+            }
+        }
+
     }
 }

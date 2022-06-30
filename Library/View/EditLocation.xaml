@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Library.View.EditLocation"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Library.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="600">
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Стелаж:" Grid.Row="0" 
+                    FontSize="18"  FontWeight="Bold"  HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Center"/>
+            <TextBox  Text="{Binding Location.Rack}"
+                    Style="{StaticResource TextBoxStyle}" Margin="0,0,30,0" Width="169"
+                    Grid.Column="0" Grid.Row="0" Height="22"  HorizontalAlignment="Left"/>
+            <Label Content="Полка:" Grid.Row="0" 
+                    FontSize="18"  FontWeight="Bold"  HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Center"/>
+            <TextBox  Text="{Binding Shelf}" PreviewTextInput="DigitInput"
+                    Style="{StaticResource TextBoxStyle}" Margin="0,0,20,0" Width="169"
+                    Grid.Column="0" Grid.Row="0" Height="22"  HorizontalAlignment="Left"/>
+            <local:PathButton Command="{Binding SaveChangesCommand}" Icon="{StaticResource PlusIcon}" 
+                    VerticalAlignment="Center" Margin="0,10,0,0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

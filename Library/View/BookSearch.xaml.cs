@@ -21,10 +21,52 @@ namespace Library.View
     /// </summary>
     public partial class BookSearch : UserControl
     {
+        bool hided = false;
+        GridLength length;
+
         public BookSearch()
         {
             InitializeComponent();
+            length = firstRow.Height;
         }
 
+        private void Hide(object sender, RoutedEventArgs e)//MouseButtonEventArgs e)
+        {
+            if (hided)
+            {
+                first.Visibility = Visibility.Visible;
+                second.Visibility = Visibility.Visible;
+                third.Visibility = Visibility.Visible;
+                four.Visibility = Visibility.Visible;
+                firstRow.Height = length;
+                HideButton.Icon = App.Current.FindResource("UpArrowIcon");
+            }
+            else
+            {
+                first.Visibility = Visibility.Collapsed;
+                second.Visibility = Visibility.Collapsed;
+                third.Visibility = Visibility.Collapsed;
+                four.Visibility = Visibility.Collapsed;
+                firstRow.Height = GridLength.Auto;
+                HideButton.Icon = App.Current.FindResource("DownArrowIcon");
+            }
+            hided = !hided;
+        }
+
+        private void YearTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (Char.IsDigit(e.Text, 0) == false)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void ISBN_Input(object sender, TextCompositionEventArgs e)
+        {
+            if((sender as TextBox)?.Text.Length > 12)
+            {
+                e.Handled = true;
+            }
+        }
     }
 }

@@ -15,16 +15,16 @@ namespace Library.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
         IMainWindowCodeBehind _mainCodeBehind;
-        Action<Story> updateSelectedStories;
-        ObservableCollection<Story> _stories;
+        Action<StoryInfo> updateSelectedStories;
+        ObservableCollection<StoryInfo> _stories;
         ObservableCollection<Author> _selectedAuthors;
-        Story _selectedStory;
+        StoryInfo _selectedStory;
         private string _storyName;
 
 
-        public ObservableCollection<Story> Stories
+        public ObservableCollection<StoryInfo> Stories
         {
-            get => _stories = _stories ?? new ObservableCollection<Story>();
+            get => _stories = _stories ?? new ObservableCollection<StoryInfo>();
             set
             {
                 _stories = value;
@@ -32,7 +32,7 @@ namespace Library.ViewModel
             }
         }
         
-        public Story SelectedStory
+        public StoryInfo SelectedStory
         {
             get => _selectedStory;
             set
@@ -63,7 +63,7 @@ namespace Library.ViewModel
             }
         }
 
-        public StorySearchViewModel(IMainWindowCodeBehind codeBehind, Action<Story> action=null)
+        public StorySearchViewModel(IMainWindowCodeBehind codeBehind, Action<StoryInfo> action=null)
         {
             _mainCodeBehind = codeBehind;
             updateSelectedStories += action;
@@ -88,6 +88,80 @@ namespace Library.ViewModel
                         Authors = SelectedAuthors?.Count == 0 ? null : SelectedAuthors
                     }
                 );
+        }
+
+
+
+        #region copypaste
+
+        RelayCommand _addStoryCommand;
+        public RelayCommand AddStoryCommand
+        {
+            get => _addStoryCommand = _addStoryCommand ?? new RelayCommand(AddStory);
+        }
+
+        RelayCommand _editStoryCommand;
+        public RelayCommand EditStoryCommand
+        {
+            get => _editStoryCommand = _editStoryCommand ?? new RelayCommand(EditStory);
+        }
+
+        RelayCommand _deleteStoryCommand;
+        public RelayCommand DeleteStoryCommand
+        {
+            get => _deleteStoryCommand = _deleteStoryCommand ?? new RelayCommand(DeleteStory);
+        }
+
+        private void AddStory()
+        {
+            OpenEditWindow(new StoryInfo());
+        }
+
+        private void EditStory()
+        {
+            if (SelectedStory != null)
+            {
+                OpenEditWindow(SelectedStory);
+            }
+        }
+
+        private void DeleteStory()
+        {
+            if (SelectedStory != null)
+            {
+                _mainCodeBehind?.Delete(SelectedStory.Story);
+                Stories.Remove(SelectedStory);
+                SelectedStory = null;
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Stories)));
+            }
+        }
+
+        private void OpenEditWindow(StoryInfo story)
+        {
+            SubsidiarySearchWindow window = new SubsidiarySearchWindow() { Height = 200, Width = 800 };
+            EditStory view = new EditStory();
+            EditStoryViewModel vm = new EditStoryViewModel(story, _mainCodeBehind, UpdateItems);
+            view.DataContext = vm;
+            window.OutputView.Content = view;
+
+            window.ShowDialog();
+        }
+
+        private void UpdateItems(StoryInfo Story)
+        {
+            if (Story != null)
+            {
+                if (Stories.Contains(Story) == false)
+                {
+                    Stories.Add(Story);
+                }
+                else
+                {
+                    Stories.Remove(Story);
+                    Stories.Add(Story);
+                }
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Stories)));
+            }
         }
 
         RelayCommand _openAuthorsSearchCommand;
@@ -137,5 +211,46 @@ namespace Library.ViewModel
                 PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedAuthors)));
             }
         }
+        bool sortAscending;
+        RelayCommand _sortCommand;
+        public RelayCommand SortCommand
+        {
+            get => _sortCommand = _sortCommand ?? new RelayCommand(Sort);
+        }
+
+        void Sort()
+        {
+            sortAscending = !sortAscending;
+            var a = System.Windows.Data.CollectionViewSource.GetDefaultView(Stories);
+            a.SortDescriptions.Clear();
+
+            if (sortAscending)
+            {
+                a.SortDescriptions.Add(new SortDescription("Story.Title", ListSortDirection.Ascending));
+            }
+            else
+            {
+                a.SortDescriptions.Add(new SortDescription("Story.Title", ListSortDirection.Descending));
+            }
+            a.Refresh();
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Stories)));
+        }
+
+        RelayCommand _exportToExcelCommand;
+        public RelayCommand ExportToExcelCommand
+        {
+            get => _exportToExcelCommand = _exportToExcelCommand ?? new RelayCommand(ExportToExcel);
+        }
+
+        void ExportToExcel()
+        {
+            if (Stories.Count > 0)
+            {
+                var export = new ExcelExporter();
+                export.ExportToExcel(Stories);
+            }
+        }
+
+        #endregion copypaste
     }
 }

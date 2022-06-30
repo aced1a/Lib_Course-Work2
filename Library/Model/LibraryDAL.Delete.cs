@@ -10,16 +10,11 @@ namespace Library
 {
     partial class LibraryDAL
     {
-        //Удалять ли рассказы, если они не содержатся в иных книгах?
         public bool DeleteBook(Book book) 
         {
-            return false; 
-        }
-        public bool DeleteAuthor(Author author) 
-        {
-            try
+            context.Books.Remove(book);
+            try 
             {
-                context.Authors.Remove(author);
                 context.SaveChanges();
                 return true;
             }
@@ -29,10 +24,98 @@ namespace Library
             }
         }
 
-        public bool DeleteGenre(Genre genre) { return false; }
-        public bool DeletePublisher(Publisher publisher) { return false; }
-        public bool DeleteBindingType(BindingType type) { return false; }
-        public bool DeleteCoverType(CoverType type) { return false; }
-        public bool DeleteStory(Story story) { return false; }
+        public bool DeleteAuthor(Author author) 
+        {
+            context.Authors.Remove(author);
+            try
+            {
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool DeleteGenre(Genre genre) 
+        {
+            context.Genres.Remove(genre);
+            try
+            {
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        public bool DeletePublisher(Publisher publisher) 
+        {
+            context.Publishers.Remove(publisher);
+            try
+            {
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        public bool DeleteBindingType(BindingType type) 
+        {
+            context.BindingTypes.Remove(type);
+            try
+            {
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        public bool DeleteCoverType(CoverType type) 
+        {
+            context.CoverTypes.Remove(type);
+            try
+            {
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        public bool DeleteStory(Story story) 
+        {
+            context.Stories.Remove(story);
+            try
+            {
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool DeleteLocation(Location location)
+        {
+            context.Locations.Remove(location);
+            try
+            {
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

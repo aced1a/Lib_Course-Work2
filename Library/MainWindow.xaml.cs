@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Media.Animation;
+
 using Library.View;
 using Library.ViewModel;
 using Library.Model.LibraryEntities;
@@ -21,36 +12,41 @@ using System.Collections.ObjectModel;
 
 namespace Library
 {
-    enum ViewType { SearchMode, InfoMode, EditMode, Settings};
+    enum ViewType { SearchMode, Settings};
     
     enum SearchViewType { AuthorsSearch, BooksSearch, PublishersSearch, GenresSearch, StoriesSearch, BindingTypesSearch, CoverTypesSearch };
 
     enum PanelType { FirstPanel, SecondPanel };
 
-    interface IMainWindowCodeBehind 
+    interface IMainWindowCodeBehind
     {
+        void LoadThisView(UserControl control);
         ObservableCollection<Author> FindAuthors(Author author);
         ObservableCollection<Genre> FindGenres(Genre genre);
         ObservableCollection<Publisher> FindPublishers(Publisher publisher);
-        ObservableCollection<Book> FindBooks(FindBookQuery query);
-        ObservableCollection<Story> FindStories(FindStoryQuery query);
+        ObservableCollection<BookInfo> FindBooks(FindBookQuery query);
+        ObservableCollection<StoryInfo> FindStories(FindStoryQuery query);
         ObservableCollection<CoverType> FindCoverTypes(CoverType coverType);
         ObservableCollection<BindingType> FindBindingTypes(BindingType bindingType);
-        ObservableCollection<Location> FindLoactions(Location location);
+        ObservableCollection<Location> FindLocations(Location location);
+        void EditBook(EditBookQuery query);
+        //void EditStory(EditStoryQuery query);
         void SaveChanges();
         void Delete<T>(T item);
         void Add<T>(T item);
+        void EditStory(EditStoryQuery query);
 
     }
 
 
     public partial class MainWindow : Window, IMainWindowCodeBehind
     {
-        LibraryDAL dal;
+        LibraryDAL dal = null;
 
         public MainWindow()
         {
             InitializeComponent();
+            App.Current.Resources.Add("EditAccess", Visibility.Visible);
             InitDAL();
             Loaded += MainWindow_Loaded;
         }
@@ -63,15 +59,20 @@ namespace Library
             }
             catch (Exception)
             {
-                MessageBox.Show("Не удалось подключиться к базе данных");
                 dal = null;
-            } 
+            }
+           
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs args)
         {
             ChangePanel(PanelType.FirstPanel);
             LoadView(ViewType.SearchMode);
+        }
+
+        public void LoadThisView(UserControl control)
+        {
+            OutputView.Content = control;
         }
 
         private void LoadView(ViewType type, SearchViewType searchType=SearchViewType.AuthorsSearch)
@@ -82,6 +83,10 @@ namespace Library
                     LoadSearchView(searchType);
                     break;
                 case ViewType.Settings:
+                    Settings view = new Settings();
+                    SettingsViewModel vm = new SettingsViewModel();
+                    view.DataContext = vm;
+                    OutputView.Content = view;
                     break;
                 default:
                     break;
@@ -163,32 +168,36 @@ namespace Library
 
         public ObservableCollection<Author> FindAuthors(Author author) 
         {
-            return new ObservableCollection<Author>(dal?.FindAuthor(author)); 
+            return dal != null ? new ObservableCollection<Author>(dal?.FindAuthor(author)) : null; 
         }
 
         public ObservableCollection<Genre> FindGenres(Genre genre) 
         {
-            return new ObservableCollection<Genre>(dal?.FindGenre(genre));
+            return dal != null ? new ObservableCollection<Genre>(dal?.FindGenre(genre)) : null;
         }
         public ObservableCollection<Publisher> FindPublishers(Publisher publisher) 
         { 
-            return new ObservableCollection<Publisher>(dal?.FindPublishers(publisher));
+            return dal != null ? new ObservableCollection<Publisher>(dal?.FindPublishers(publisher)) : null;
         }
-        public ObservableCollection<Book> FindBooks(FindBookQuery query) 
+        public ObservableCollection<BookInfo> FindBooks(FindBookQuery query) 
         {
-            return new ObservableCollection<Book>(dal?.FindBook(query));
+            return dal != null ? new ObservableCollection<BookInfo>((from item in dal?.FindBook(query) select new BookInfo() { Book = item})) : null;
         }
-        public ObservableCollection<Story> FindStories(FindStoryQuery query) 
+        public ObservableCollection<StoryInfo> FindStories(FindStoryQuery query) 
         {
-            return new ObservableCollection<Story>(dal?.FindStory(query));
+            return dal != null ? new ObservableCollection<StoryInfo>(from item in dal?.FindStory(query) select new StoryInfo() { Story = item }) : null;
         }
 
         public ObservableCollection<CoverType> FindCoverTypes(CoverType coverType) 
         {
-            return new ObservableCollection<CoverType>(dal?.FindCoverType(coverType));
+            return dal != null ? new ObservableCollection<CoverType>(dal?.FindCoverType(coverType)) : null;
         }
-        public ObservableCollection<BindingType> FindBindingTypes(BindingType bindingType) { return null; }
-        public ObservableCollection<Location> FindLoactions(Location location) { return null; }
+        public ObservableCollection<BindingType> FindBindingTypes(BindingType bindingType) 
+        { return dal != null ? new ObservableCollection<BindingType>(dal?.FindBindingType(bindingType)) : null; }
+        public ObservableCollection<Location> FindLocations(Location location) 
+        {
+            return dal != null ? new ObservableCollection<Location>(dal?.FindLocation(location)) : null;
+        }
 
         public void SaveChanges()
         {
@@ -198,16 +207,21 @@ namespace Library
             }
         }
 
-        //public ObservableCollection<T> Search<T>(T item)
-        //{
-        //    switch (item)
-        //    {
-        //        case Author author: return new ObservableCollection<T>(dal?.FindAuthor(author));
-        //        case Genre genre: return new ObservableCollection<T>(dal?.FindGenre(genre));
-        //        default:
-        //            return null;
-        //    }
-        //}
+        public void EditBook(EditBookQuery query) 
+        {
+            if (dal?.EditBook(query) == false)
+            {
+                MessageBox.Show("Не удалось изменить книгу");
+            }
+        }
+
+        public void EditStory(EditStoryQuery query)
+        {
+            if (dal?.EditStory(query) == false)
+            {
+                MessageBox.Show("Не удалось изменить рассказ");
+            }
+        }
 
         public void Add<T>(T item)
         {
@@ -229,6 +243,15 @@ namespace Library
                 case AddStoryQuery query:
                     result = dal?.AddStory(query);
                     break;
+                case Location location:
+                    result = dal?.AddLocation(location);
+                    break;
+                case BindingType type:
+                    result = dal?.AddBindingType(type);
+                    break;
+                case CoverType type:
+                    result = dal?.AddCoverType(type);
+                    break;
                 default:
                     break;
             }
@@ -247,16 +270,25 @@ namespace Library
                     result = dal?.DeleteAuthor(a);
                     break;
                 case Genre g:
-                    result = dal?.AddGenre(g);
+                    result = dal?.DeleteGenre(g);
                     break;
                 case Publisher p:
-                    result = dal?.AddPublisher(p);
+                    result = dal?.DeletePublisher(p);
                     break;
-                case AddBookQuery query:
-                    result = dal?.AddBook(query);
+                case Book book:
+                    result = dal?.DeleteBook(book);
                     break;
-                case AddStoryQuery query:
-                    result = dal?.AddStory(query);
+                case Story story:
+                    result = dal?.DeleteStory(story);
+                    break;
+                case Location location:
+                    result = dal?.DeleteLocation(location);
+                    break;
+                case BindingType type:
+                    result = dal?.DeleteBindingType(type);
+                    break;
+                case CoverType type:
+                    result = dal?.DeleteCoverType(type);
                     break;
                 default:
                     break;

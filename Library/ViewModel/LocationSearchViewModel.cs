@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using Library.Model.LibraryEntities;
+using Library.View;
 
 namespace Library.ViewModel
 {
@@ -76,13 +77,108 @@ namespace Library.ViewModel
             int s = 0;
             int? shelf = int.TryParse(Shelf, out s) ? (int?)s : null;
 
-            Locations = _mainCodeBehind?.FindLoactions(
+            Locations = _mainCodeBehind?.FindLocations(
                 new Location()
                 {
                     Rack = this.Rack,
-                    Shelf = s
+                    Shelf = shelf
                 }
             );
         }
+
+        #region copypaste
+            RelayCommand _addLocationCommand;
+            public RelayCommand AddLocationCommand
+            {
+                get => _addLocationCommand = _addLocationCommand ?? new RelayCommand(AddLocation);
+            }
+
+            RelayCommand _editLocationCommand;
+            public RelayCommand EditLocationCommand
+            {
+                get => _editLocationCommand = _editLocationCommand ?? new RelayCommand(EditLocation);
+            }
+
+            RelayCommand _deleteLocationCommand;
+            public RelayCommand DeleteLocationCommand
+            {
+                get => _deleteLocationCommand = _deleteLocationCommand ?? new RelayCommand(DeleteLocation);
+            }
+
+        void AddLocation() 
+        {
+            OpenEditWindow(new Location() { ID = -1 });
+        }
+        void EditLocation() 
+        {
+            if(SelectedLocation != null)
+            {
+                OpenEditWindow(SelectedLocation);
+            }
+        }
+        void DeleteLocation() 
+        {
+            if(SelectedLocation != null)
+            {
+                _mainCodeBehind?.Delete(SelectedLocation);
+                Locations.Remove(SelectedLocation);
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Locations)));
+            }
+        }
+
+        private void OpenEditWindow(Location location)
+        {
+            SubsidiarySearchWindow window = new SubsidiarySearchWindow() { Height = 800, Width = 800 };
+            EditLocation view = new EditLocation();
+            EditLocationViewModel vm = new EditLocationViewModel(location, _mainCodeBehind, UpdateItems);
+            view.DataContext = vm;
+            window.OutputView.Content = view;
+
+            window.ShowDialog();
+        }
+
+        void UpdateItems(Location item)
+        {
+            if(item != null)
+            {
+                if(Locations.Contains(item) == false)
+                {
+                    Locations.Add(item);
+                }
+                else
+                {
+                    Locations.Remove(item);
+                    Locations.Add(item);
+                }
+                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(Locations)));
+            }
+        }
+
+        bool sortAscending;
+        RelayCommand _sortCommand;
+        public RelayCommand SortCommand
+        {
+            get => _sortCommand = _sortCommand ?? new RelayCommand(Sort);
+        }
+
+        void Sort()
+        {
+            sortAscending = !sortAscending;
+            var a = System.Windows.Data.CollectionViewSource.GetDefaultView(Locations);
+            a.SortDescriptions.Clear();
+
+            if (sortAscending)
+            {
+                a.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+            }
+            else
+            {
+                a.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Descending));
+            }
+            a.Refresh();
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Locations)));
+        }
+
+        #endregion
     }
 }

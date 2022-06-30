@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Library"
         xmlns:view="clr-namespace:Library.View"
         mc:Ignorable="d"
-        Title="MainWindow" Height="560" Width="1100">
+        Title="MainWindow" Height="800" Width="1200">
     <DockPanel>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -15,7 +15,9 @@
             </Grid.ColumnDefinitions>
 
             <ContentPresenter Grid.Column="0" x:Name="PanelView" HorizontalAlignment="Stretch"/>
-            <ContentPresenter Grid.Column="1" x:Name="OutputView" HorizontalAlignment="Stretch"/>
+            <ContentPresenter Grid.Column="1" x:Name="OutputView" HorizontalAlignment="Stretch" 
+                VerticalAlignment="Stretch" ScrollViewer.CanContentScroll="True"
+               ScrollViewer.VerticalScrollBarVisibility="Auto"/>
         </Grid>
     </DockPanel>
 </Window>

@@ -7,20 +7,13 @@ using Library.Model.LibraryEntities;
 
 namespace Library.Query
 {
-    public class AddStoryQuery : IExecutableQuery
+    public class AddStoryQuery
     {
         public Story Story { get; set; }
         public IEnumerable<Author> Authors { get; set; }
 
 
-        public event QueryExecuted ExecuteQuery;
-        public bool Execute()
-        {
-            object res = null;
-            if (ExecuteQuery != null)
-                if ((res = ExecuteQuery.Invoke(this)) as bool? != null) { return (bool)res; }
-            return false;
-        }
+
     }
 
 }

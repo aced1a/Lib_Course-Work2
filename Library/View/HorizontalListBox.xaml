@@ -16,7 +16,7 @@
         </ListBox.ItemsPanel>
         <ListBox.ItemTemplate>
             <DataTemplate>
-                <Button Background="#00000000" Click="Button_Click" Tag="{Binding}">
+                <Button Background="#00000000" Click="Button_Click" Tag="{Binding}" Template="{StaticResource ButtonTemplate}"> 
                     <Label x:Name="label" Content="{Binding Path=Name}" FontSize="12"/>
                 </Button>
             </DataTemplate>

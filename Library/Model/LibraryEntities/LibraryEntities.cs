@@ -1,15 +1,27 @@
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
-using System.Linq;
+
 
 namespace Library.Model.LibraryEntities
 {
+
     public partial class LibraryEntities : DbContext
     {
         public LibraryEntities()
             : base("name=LibraryEntities")
         {
+        }
+
+        public LibraryEntities(string name)
+            : base(name)
+        {
+            Configuration.AutoDetectChangesEnabled = true;
+            Configuration.LazyLoadingEnabled = true;
+        }
+
+        static public void Init()
+        {
+            
+            Database.SetInitializer<LibraryEntities>(null);
         }
 
         public virtual DbSet<Author> Authors { get; set; }
@@ -56,7 +68,7 @@ namespace Library.Model.LibraryEntities
 
             modelBuilder.Entity<BindingType>()
                 .HasMany(e => e.Books)
-                .WithOptional(e => e.binding_type)
+                .WithOptional(e => e.BindingType)
                 .HasForeignKey(e => e.BindingTypeID);
 
             modelBuilder.Entity<Book>()

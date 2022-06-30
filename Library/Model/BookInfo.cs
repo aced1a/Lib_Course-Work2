@@ -11,14 +11,23 @@ using Library;
 
 namespace Library.Model.LibraryEntities
 {
-    class BookInfo : INotifyPropertyChanged
+    public class BookInfo : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        public Book Book { get; set; }
+        private Book _book;
+        public Book Book
+        {
+            get => _book = _book ?? new Book() { ID = -1 };
+            set
+            {
+                _book = value;
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Book)));
+            }
+        }
 
         private ObservableCollection<Author> _authors;
-        public ObservableCollection<Author>  Authors {
+        public ObservableCollection<Author> Authors {
             get => _authors = _authors ?? new ObservableCollection<Author>(GetAuthors());
             set
             {
@@ -48,10 +57,10 @@ namespace Library.Model.LibraryEntities
             }
         }
 
-        ObservableCollection<Story> _stories;
-        public ObservableCollection<Story> Stories
+        ObservableCollection<StoryInfo> _stories;
+        public ObservableCollection<StoryInfo> Stories
         {
-            get => _stories = _stories ?? new ObservableCollection<Story>(GetStories());
+            get => _stories = _stories ?? new ObservableCollection<StoryInfo>(GetStories());
             set
             {
                 _stories = value;
@@ -61,16 +70,19 @@ namespace Library.Model.LibraryEntities
 
         public object Image
         {
-            get => (object) Book.Image ?? (object) App.GetResourceStream(new Uri("ImageNotFound"));
+            get => (object)Book.Image ?? App.Current.FindResource("ImageNotFound");
         }
 
         public BookInfo(Book book)
         {
-            Book = book ?? new Book() { ID = -1 };     
+            Book = book;
+            
         }
 
+        public BookInfo() { }
 
-        private IEnumerable<Author> GetAuthors() 
+
+        private IEnumerable<Author> GetAuthors()
         {
             return from item in Book.BookAuthor select item.Author;
         }
@@ -85,15 +97,9 @@ namespace Library.Model.LibraryEntities
             return from item in Book.BookPublisher select item.Publisher;
         }
 
-        private IEnumerable<Story> GetStories()
+        private IEnumerable<StoryInfo> GetStories()
         {
-            return from item in Book.BookStory select item.Story;
-        }
-
-
-        private void DrawImage()
-        {
-            
+            return from item in Book.BookStory select new StoryInfo { Story = item.Story };
         }
 
         public string AuthorsText
@@ -102,14 +108,14 @@ namespace Library.Model.LibraryEntities
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append("Авторы: ");
-                int i = 0, min = Math.Min(3, Authors.Count());
+                int i = 0, min = Math.Min(5, Authors.Count());
                 foreach (var author in Authors)
                 {
                     sb.Append(author.FullName); i++;
                     if (i >= min) break;
                     sb.Append(", ");
                 }
-                if (min > 3) sb.Append(" ...");
+                if (min > 5) sb.Append(" ...");
                 return sb.ToString();
             }
         }
@@ -137,10 +143,10 @@ namespace Library.Model.LibraryEntities
             get
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("Жанры: ");
+                sb.Append("Издатели: ");
                 int i = 0, min = Math.Min(3, Publishers.Count);
-                foreach (var publisher in Publishers) { 
-                
+                foreach (var publisher in Publishers) {
+
                     sb.Append(publisher.Name); i++;
                     if (i >= min) break;
                     sb.Append(", ");
@@ -150,4 +156,62 @@ namespace Library.Model.LibraryEntities
             }
         }
     }
+
+
+    public class StoryInfo : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        Story _story;
+
+        public Story Story
+        {
+            get => _story = _story ?? new Story() { ID = -1 };
+            set
+            {
+                _story = value;
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Story)));
+            }
+        }
+        private ObservableCollection<Author> _authors;
+
+        public ObservableCollection<Author> Authors
+        {
+            get => _authors = _authors ?? new ObservableCollection<Author>(GetAuthors());
+            set
+            {
+                _authors = value;
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Authors)));
+            }
+        }
+
+        public StoryInfo()
+        {
+
+        }
+
+        public string AuthorsText
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Авторы: ");
+                int i = 0, min = Math.Min(3, Authors.Count());
+                foreach (var author in Authors)
+                {
+                    sb.Append(author.FullName); i++;
+                    if (i >= min) break;
+                    sb.Append(", ");
+                }
+                if (min > 3) sb.Append(" ...");
+                return sb.ToString();
+            }
+        }
+
+        private IEnumerable<Author> GetAuthors()
+        {
+            return from item in Story.StoryAuthor select item.Author;
+        }
+    }
+
 }

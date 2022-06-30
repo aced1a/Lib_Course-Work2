@@ -15,12 +15,12 @@ namespace Library.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
         IMainWindowCodeBehind _mainCodeBehind;
-        private ObservableCollection<Book> _books;
+        private ObservableCollection<BookInfo> _books;
         private ObservableCollection<Genre> _selectedGenres;
         private ObservableCollection<Publisher> _selectedPublishers;
         private ObservableCollection<Author> _selectedAuthors;
-        private ObservableCollection<Story> _selectedStories;
-        private Book _selectedBook;
+        private ObservableCollection<StoryInfo> _selectedStories;
+        private BookInfo _selectedBook;
         private CoverType _coverType;
         private BindingType _bindingType;
         private Location _location;
@@ -28,7 +28,7 @@ namespace Library.ViewModel
         string _beginYear, _endYear;
         string _coverTypeName, _bindingTypeName;
         string _locationName;
-        BookInfo _bookInfo;
+       
 
         public BookSearchViewModel(IMainWindowCodeBehind codeBehind)
         {
@@ -106,9 +106,9 @@ namespace Library.ViewModel
             }
         }
 
-        public ObservableCollection<Book> Books
+        public ObservableCollection<BookInfo> Books
         {
-            get => _books = _books ?? new ObservableCollection<Book>();
+            get => _books = _books ?? new ObservableCollection<BookInfo>();
             set
             {
                 _books = value;
@@ -116,7 +116,7 @@ namespace Library.ViewModel
             }
         }
 
-        public Book SelectedBook
+        public BookInfo SelectedBook
         {
             get => _selectedBook;
             set
@@ -189,9 +189,9 @@ namespace Library.ViewModel
             }
         }
 
-        public ObservableCollection<Story> SelectedStories
+        public ObservableCollection<StoryInfo> SelectedStories
         {
-            get => _selectedStories = _selectedStories ?? new ObservableCollection<Story>();
+            get => _selectedStories = _selectedStories ?? new ObservableCollection<StoryInfo>();
             set
             {
                 _selectedStories = value;
@@ -199,8 +199,166 @@ namespace Library.ViewModel
             }
         }
 
+        RelayCommand _addBookCommand;
+        public RelayCommand AddBookCommand
+        {
+            get => _addBookCommand = _addBookCommand ?? new RelayCommand(AddBook);
+        }
 
-        RelayCommand _findBooksCommand;
+        RelayCommand _editBookCommand;
+        public RelayCommand EditBookCommand
+        {
+            get => _editBookCommand = _editBookCommand ?? new RelayCommand(EditBook);
+        }
+
+        RelayCommand _deleteBookCommand;
+        public RelayCommand DeleteBookCommand
+        {
+            get => _deleteBookCommand = _deleteBookCommand ?? new RelayCommand(DeleteBook);
+        }
+
+        private void AddBook()
+        {
+            OpenEditWindow(new BookInfo());
+        }
+
+        private void EditBook()
+        {
+            if(SelectedBook != null)
+            {
+                OpenEditWindow(SelectedBook);
+            }
+        }
+
+        private void DeleteBook()
+        {
+            if(SelectedBook != null)
+            {
+                _mainCodeBehind?.Delete(SelectedBook.Book);
+                Books.Remove(SelectedBook);
+                SelectedBook = null;
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Books)));
+            }
+        }
+
+        private void OpenEditWindow(BookInfo book)
+        {
+            SubsidiarySearchWindow window = new SubsidiarySearchWindow() { Height=800, Width=800};
+            EditBook view = new EditBook();
+            EditBookViewModel vm = new EditBookViewModel(book, _mainCodeBehind, UpdateItems);
+            view.DataContext = vm;
+            window.OutputView.Content = view;
+
+            window.ShowDialog();
+        }
+
+        private void UpdateItems(BookInfo book)
+        {
+            if (book != null)
+            {
+                if (Books.Contains(book) == false)
+                {
+                    Books.Add(book);
+                }
+                else {
+                    Books.Remove(book);
+                    Books.Add(book);
+                }
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Books)));
+            }
+        }
+
+        RelayCommand _openExtendedViewCommand;
+        public RelayCommand OpenExtendedViewCommand
+        {
+            get => _openExtendedViewCommand = _openExtendedViewCommand ?? new RelayCommand(OpenExtendedView);
+        }
+
+        void OpenExtendedView()
+        {
+            if(SelectedBook != null)
+            {
+                BookExtended view = new BookExtended();
+                ExtendedBookViewModel vm = new ExtendedBookViewModel(SelectedBook, this, ChangeView);
+                view.DataContext = vm;
+                _mainCodeBehind?.LoadThisView(view);
+            }
+        }
+
+        void ChangeView(System.Windows.Controls.UserControl control)
+        {
+            _mainCodeBehind?.LoadThisView(control);
+        }
+
+        RelayCommand _exportToExcelCommand;
+        public RelayCommand ExportToExcelCommand
+        {
+            get => _exportToExcelCommand = _exportToExcelCommand ?? new RelayCommand(ExportToExcel);
+        }
+
+        void ExportToExcel()
+        {
+            if (Books.Count > 0)
+            {
+                var export = new ExcelExporter();
+                var items = from item in Books select item.Book;
+                export.ExportToExcel(items);
+            }
+        }
+
+        RelayCommand<string> _selectSortModeCommand;
+        public RelayCommand<string> SelectSortModeCommand
+        {
+            get => _selectSortModeCommand = _selectSortModeCommand ?? new RelayCommand<string>(SelectSortMode);
+        }
+
+        void SelectSortMode(string mode)
+        {
+            System.Windows.MessageBox.Show(mode);
+            sortMode = mode;
+            Sort();
+        }
+
+        bool sortAscending = false;
+        string sortMode = "Author";
+        RelayCommand _sortCommand;
+        public RelayCommand SortCommand
+        {
+            get => _sortCommand = _sortCommand ?? new RelayCommand(Sort);
+        }
+        void Sort()
+        {
+            sortAscending = !sortAscending;
+            ListSortDirection direction = sortAscending ? ListSortDirection.Ascending : ListSortDirection.Descending;
+
+            var books = System.Windows.Data.CollectionViewSource.GetDefaultView(Books);
+            books.SortDescriptions.Clear();
+
+            switch (sortMode)
+            {
+                case "Author":
+                    books.SortDescriptions.Add(new SortDescription("AuthorsText", direction));
+                    break;
+                case "Genre":
+                    books.SortDescriptions.Add(new SortDescription("GenresText", direction));
+                    break;
+                case "Publisher":
+                    books.SortDescriptions.Add(new SortDescription("PublishersText", direction));
+                    break;
+                case "Title":
+                    books.SortDescriptions.Add(new SortDescription("Book.Title", direction));
+                    break;
+
+                default:
+                    return;
+            }
+            books.Refresh();
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(Books)));
+        }
+
+            #region copypaste
+
+            RelayCommand _findBooksCommand;
         public RelayCommand FindBooksCommand
         {
             get => _findBooksCommand = _findBooksCommand ?? new RelayCommand(FindBooks);
@@ -215,10 +373,10 @@ namespace Library.ViewModel
                     Book = GetBook(),
                     Authors = SelectedAuthors?.Count == 0 ? null : SelectedAuthors,
                     Genres = SelectedGenres?.Count == 0 ? null : SelectedGenres,
-                    Stories = SelectedStories?.Count == 0 ? null : SelectedStories,
+                    Stories = SelectedStories?.Count == 0 ? null : (from item in SelectedStories select item.Story),
                     Publishers = SelectedPublishers?.Count == 0 ? null : SelectedPublishers,
                     BeginYear = int.TryParse(BeginYear, out year) ? (int?)year : null,
-                    EndYear = int.TryParse(BeginYear, out year) ? (int?)year : null
+                    EndYear = int.TryParse(EndYear, out year) ? (int?)year : null
                 }
             );
         }
@@ -346,7 +504,6 @@ namespace Library.ViewModel
 
         private void AddPublisher(Publisher publisher) 
         {
-            System.Windows.MessageBox.Show("YYE");
             if (SelectedPublishers.Contains(publisher) == false)
             {
                 SelectedPublishers.Add(publisher);
@@ -388,7 +545,7 @@ namespace Library.ViewModel
             window.ShowDialog();
         }
 
-        private void AddStory(Story story)
+        private void AddStory(StoryInfo story)
         {
             if (SelectedStories.Contains(story) == false)
             {
@@ -399,7 +556,7 @@ namespace Library.ViewModel
 
         private void DeleteStory(object obj)
         {
-            Story story = obj as Story;
+            StoryInfo story = obj as StoryInfo;
             if (story != null && SelectedStories.Contains(story))
             {
                 SelectedStories.Remove(story);
@@ -503,4 +660,5 @@ namespace Library.ViewModel
         }
         private void DeleteLocation() { Location = null; }
     }
+    #endregion copypaste
 }

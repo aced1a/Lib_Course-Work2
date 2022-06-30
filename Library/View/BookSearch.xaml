@@ -4,12 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Library.View"
+             xmlns:vm="clr-namespace:Library.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="900">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="6*"/>
-            <RowDefinition Height="5*"/>
+            <RowDefinition x:Name="firstRow" Height="6*"/>
+            <RowDefinition x:Name="secondRow" Height="5*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.RowDefinitions>
@@ -25,20 +26,23 @@
             <local:PathButton 
                 Icon="{StaticResource SearchIcon}" Command="{Binding FindBooksCommand, Mode=OneTime}"
                 HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,10,10,43.4" Grid.RowSpan="2"/>
-            <Grid Grid.Row="1">
+            <Grid x:Name="first" Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0" Content="Года:" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
-                <TextBox Grid.Column="0" Style="{StaticResource TextBoxStyle}" Text="{Binding BeginYear}" VerticalAlignment="Center" Width="150" Margin="250,11,0,11.8" HorizontalAlignment="Left" />
-                <TextBox Grid.Column="0" Style="{StaticResource TextBoxStyle}" Text="{Binding EndYear}" VerticalAlignment="Center" Width="150" Margin="70,11,0,11.8" HorizontalAlignment="Left" />
+                <TextBox Grid.Column="0" Style="{StaticResource TextBoxStyle}" PreviewTextInput="YearTextInput"
+                         Text="{Binding BeginYear}" VerticalAlignment="Center" Width="150" Margin="250,11,0,11.8" HorizontalAlignment="Left" />
+                <TextBox Grid.Column="0" Style="{StaticResource TextBoxStyle}" PreviewTextInput="YearTextInput"
+                         Text="{Binding EndYear}" VerticalAlignment="Center" Width="150" Margin="70,11,0,11.8" HorizontalAlignment="Left" />
 
                 <Label Grid.Column="1" Content="ISBN:" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
-                <TextBox Grid.Column="1" Style="{StaticResource TextBoxStyle}" Text="{Binding ISBN}" VerticalAlignment="Center" Margin="57.6,13,45,13.8" />
+                <TextBox Grid.Column="1" Style="{StaticResource TextBoxStyle}" PreviewTextInput="ISBN_Input"
+                         Text="{Binding ISBN}" VerticalAlignment="Center" Margin="57.6,13,45,13.8" />
             </Grid>
-            <Grid Grid.Row="2">
+            <Grid x:Name="second" Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
@@ -48,7 +52,7 @@
                 <local:PathButton Grid.Column="0" 
                     Icon="{StaticResource PlusIcon}" Command="{Binding OpenCoverTypesSearchCommand, Mode=OneTime}"
                     VerticalAlignment="Center" HorizontalAlignment="Left" Margin="94,11,0,-0.2" />
-                <Button Grid.Column="0" Command="{Binding DeleteCoverTypeCommand, Mode=OneTime}"
+                <Button Grid.Column="0" Command="{Binding DeleteCoverTypeCommand, Mode=OneTime}" Template="{StaticResource ButtonTemplate}"
                     Background="#00000000" Margin="118,5,250.4,4.8" BorderBrush="#A2A2A299">
                     <Label Content="{Binding Path=CoverTypeName}" FontSize="12"/>
                 </Button>
@@ -58,7 +62,7 @@
                 <local:PathButton Grid.Column="0"
                     Icon="{StaticResource PlusIcon}" Command="{Binding OpenBindingTypesSearchCommand, Mode=OneTime}"
                     VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,16,135,4.8" />
-                <Button Grid.Column="0" Command="{Binding DeleteBindingTypeCommand, Mode=OneTime}"
+                <Button Grid.Column="0" Command="{Binding DeleteBindingTypeCommand, Mode=OneTime}" Template="{StaticResource ButtonTemplate}"
                     Background="#00000000" Margin="0,5,5.4,4.8" HorizontalAlignment="Right" Width="125" BorderBrush="#A2A2A299">
                     <Label Content="{Binding Path=BindingTypeName}" FontSize="12"/>
                 </Button>
@@ -67,12 +71,12 @@
                 <local:PathButton Grid.Column="1"
                     Icon="{StaticResource PlusIcon}" Command="{Binding OpenLocationsSearchCommand, Mode=OneTime}"
                     VerticalAlignment="Center" HorizontalAlignment="Left" Margin="141.6,11,0,-0.2" />
-                <Button Grid.Column="1" Command="{Binding DeleteLocationCommand, Mode=OneTime}"
+                <Button Grid.Column="1" Command="{Binding DeleteLocationCommand, Mode=OneTime}" Template="{StaticResource ButtonTemplate}"
                     Background="#00000000" Margin="165.6,5,0,4.8" HorizontalAlignment="Left" Width="274">
                     <Label Content="{Binding Path=LocationName}" FontSize="12"/>
                 </Button>
             </Grid>
-            <Grid Grid.Row="3">
+            <Grid x:Name="third" Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
@@ -98,7 +102,7 @@
                     Command="{Binding DeleteStoryCommand}"
                     DataSource="{Binding Path=SelectedStories}"/>
             </Grid>
-            <Grid Grid.Row="4">
+            <Grid x:Name="four" Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
@@ -126,6 +130,10 @@
             </Grid>
         </Grid>
         <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="32*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
             <ListBox x:Name="list" Grid.Column="0"
                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
@@ -139,22 +147,82 @@
                                 <ColumnDefinition Width="5*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="4*"/>
                                 <RowDefinition Height="2*"/>
                                 <RowDefinition Height="2*"/>
                                 <RowDefinition Height="2*"/>
                             </Grid.RowDefinitions>
 
-                            <Image MaxHeight="150" MaxWidth="100" Grid.Column="0" Grid.RowSpan="3" Source="{StaticResource ImageNotFound}"/>
-                            <Label Grid.Column="1" Grid.Row="0" Content="{Binding Path=Title}" FontSize="18" FontWeight="Bold" VerticalAlignment="Top"/>
+                            <Image MaxHeight="150" MaxWidth="100" Grid.Column="0" Grid.RowSpan="4" Source="{Binding Image}"/>
 
-                            <Label Grid.Column="1" Grid.Row="1" Content="{Binding Path=Authors}" Foreground="Gray" FontSize="12" VerticalAlignment="Top"/>
-                            <Label Grid.Column="1" Grid.Row="2" Content="{Binding Path=Genres}"  Foreground="Gray" FontSize="12" VerticalAlignment="Top"/>
+                            <Label Grid.Row="0" Grid.Column="1"
+                                   Content="{Binding Path=Book.Title}" FontSize="20" FontWeight="Bold" VerticalAlignment="Top">
+                            </Label>
+
+                            <Label Grid.Column="1" Grid.Row="1" Content="{Binding Path=AuthorsText}" Foreground="Gray" FontSize="12" VerticalAlignment="Top"/>
+                            <Label Grid.Column="1" Grid.Row="2" Content="{Binding Path=GenresText}"  Foreground="Gray" FontSize="12" VerticalAlignment="Top"/>
+                            <Label Grid.Column="1" Grid.Row="3" Content="{Binding Path=PublishersText}"  Foreground="Gray" FontSize="12" VerticalAlignment="Top"/>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <StackPanel Grid.Column="1"/>
+            <StackPanel Grid.Column="1">
+                <StackPanel.Resources>
+                    <local:BindingProxy x:Key="Proxy" Data="{Binding}" />
+                </StackPanel.Resources>
+
+                <Button Template="{StaticResource ButtonTemplate}"
+                    Style="{StaticResource ASideButtonStyle}"
+                    Click="Hide" Background="#00000000">
+                    <local:PathButton
+                        x:Name="HideButton"
+                        Icon="{StaticResource UpArrowIcon}"/>
+                </Button>
+                
+                <!--<local:PathButton
+                    x:Name="HideButton"
+                    MouseDoubleClick="Hide"
+                    
+                    Icon="{StaticResource UpArrowIcon}"
+                    />-->
+                <local:PathButton
+                    Command="{Binding AddBookCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
+                    Icon="{StaticResource PlusIcon}"
+                    />
+                <local:PathButton
+                    Command="{Binding EditBookCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
+                    Icon="{StaticResource ChangeIcon}"
+                    />
+                <local:PathButton
+                    Command="{Binding DeleteBookCommand, Mode=OneTime}" Visibility="{DynamicResource EditAccess}"
+                    Icon="{StaticResource MinusIcon}"
+                    />
+                <local:PathButton
+                    Command="{Binding OpenExtendedViewCommand, Mode=OneTime}"
+                    Icon="{StaticResource ViewIcon}"
+                    />
+                <local:PathButton
+                    Command="{Binding SortCommand, Mode=OneTime}"
+                    Icon="{StaticResource SortIcon}"
+                    >
+                    <local:PathButton.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="По жанрам" Command="{Binding Source={StaticResource Proxy},Path=Data.SelectSortModeCommand}" CommandParameter="Genre"/>
+                            <MenuItem Header="По авторам" Command="{Binding Source={StaticResource Proxy},Path=Data.SelectSortModeCommand}" CommandParameter="Author"/>
+                            <MenuItem Header="По издателям" Command="{Binding Source={StaticResource Proxy},Path=Data.SelectSortModeCommand}" CommandParameter="Publisher"/>
+                            <MenuItem Header="По названию" Command="{Binding Source={StaticResource Proxy},Path=Data.SelectSortModeCommand}" CommandParameter="Title"/>
+
+                        </ContextMenu>
+                    </local:PathButton.ContextMenu>
+                </local:PathButton>
+
+                <local:PathButton
+                    Command="{Binding ExportToExcelCommand, Mode=OneTime}"
+                    Icon="{StaticResource TableIcon}"
+                    />
+            </StackPanel>
         </Grid>
+
     </Grid>
 </UserControl>

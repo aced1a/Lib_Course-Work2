@@ -19,8 +19,7 @@ namespace Library.Model.LibraryEntities
         [Column("author_id")]
         public int AuthorID { get; set; }
 
-        [Column("from_story")]
-        public bool? IsFromStory { get; set; }
+    
 
         public virtual Author Author { get; set; }
 

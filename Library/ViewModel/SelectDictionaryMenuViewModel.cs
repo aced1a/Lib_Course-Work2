@@ -75,7 +75,7 @@ namespace Library.ViewModel
         RelayCommand _onLoadSettings;
         public RelayCommand OnLoadSettingsCommand
         {
-            get => _onLoadStories = _onLoadStories ?? new RelayCommand(OnLoadSettings);
+            get => _onLoadSettings = _onLoadSettings ?? new RelayCommand(OnLoadSettings);
         }
 
         private void OnLoadBooks() => chgView?.Invoke(ViewType.SearchMode, SearchViewType.BooksSearch);
@@ -93,6 +93,6 @@ namespace Library.ViewModel
         private void OnLoadBindingTypes() => chgView?.Invoke(ViewType.SearchMode, SearchViewType.BindingTypesSearch);
         private void OnLoadCoverTypes() => chgView?.Invoke(ViewType.SearchMode, SearchViewType.CoverTypesSearch);
 
-        private void OnLoadSettings() => chgView?.Invoke(ViewType.SearchMode, SearchViewType.AuthorsSearch);
+        private void OnLoadSettings() => chgView?.Invoke(ViewType.Settings, SearchViewType.AuthorsSearch);
     }
 }
